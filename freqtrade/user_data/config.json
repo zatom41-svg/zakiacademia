@@ -1,0 +1,83 @@
+{
+    "strategy": "MomentumTrend",
+    "za_leverage": 2.0,
+    "za_risk_per_trade": 0.02,
+    "dry_run": true,
+    "dry_run_wallet": 1000,
+    "stake_currency": "USDT",
+    "stake_amount": "unlimited",
+    "tradable_balance_ratio": 0.95,
+    "max_open_trades": 8,
+    "fiat_display_currency": "EUR",
+    "trading_mode": "futures",
+    "margin_mode": "isolated",
+    "cancel_open_orders_on_exit": false,
+    "unfilledtimeout": {
+        "entry": 10,
+        "exit": 10,
+        "exit_timeout_count": 0,
+        "unit": "minutes"
+    },
+    "entry_pricing": {
+        "price_side": "other",
+        "use_order_book": false,
+        "price_last_balance": 0.0
+    },
+    "exit_pricing": {
+        "price_side": "other",
+        "use_order_book": false
+    },
+    "exchange": {
+        "name": "okx",
+        "key": "",
+        "secret": "",
+        "ccxt_config": {
+            "aiohttp_trust_env": true
+        },
+        "ccxt_async_config": {
+            "aiohttp_trust_env": true
+        },
+        "pair_whitelist": [
+            "BTC/USDT:USDT",
+            "ETH/USDT:USDT",
+            "SOL/USDT:USDT",
+            "BNB/USDT:USDT",
+            "XRP/USDT:USDT",
+            "DOGE/USDT:USDT",
+            "AVAX/USDT:USDT",
+            "LINK/USDT:USDT"
+        ],
+        "pair_blacklist": []
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "telegram": {
+        "enabled": false,
+        "token": "",
+        "chat_id": ""
+    },
+    "api_server": {
+        "enabled": true,
+        "listen_ip_address": "0.0.0.0",
+        "listen_port": 8080,
+        "verbosity": "error",
+        "enable_openapi": false,
+        "jwt_secret_key": "CHANGEZ-MOI-avec-une-longue-phrase-secrete-32c",
+        "ws_token": "CHANGEZ-MOI-ws-token",
+        "CORS_origins": [
+            "http://localhost:8081",
+            "http://127.0.0.1:8081"
+        ],
+        "username": "zaki",
+        "password": "CHANGEZ-MOI"
+    },
+    "bot_name": "zakiacademia-momentum",
+    "initial_state": "running",
+    "internals": {
+        "process_throttle_secs": 5
+    },
+    "dataformat_ohlcv": "feather"
+}
