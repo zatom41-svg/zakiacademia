@@ -42,6 +42,32 @@ FTMO n'a plus de limite de temps, mais il faut au moins 4 jours de trading. Avec
 
 Monter le risque à 2 % double la vitesse, mais aussi le risque de toucher −5 % dans la journée. Ne dépassez pas 1 à 1,5 %. Gagner vite est justement ce qui fait échouer la majorité des challenges (seulement ~14 % de réussite dans l'industrie).
 
+## Simulateur de challenge
+
+`ftmo_sim.py` estime vos chances de valider la phase 1 (+10 %) en moins de 30 jours, selon le risque par trade (20 000 challenges simulés, 1 trade par jour en moyenne, coupure de l'EA à −4 % par jour) :
+
+| Stratégie | Risque / trade | Réussi en < 30 j | Échoué | Encore en cours |
+|---|---|---|---|---|
+| Sans avantage (espérance 0) | 1 % | 18 % | 12 % | 71 % |
+| Sans avantage | 2 % | 34 % | 48 % | 19 % |
+| Petit avantage (+0,15 R/trade) | 1 % | 29 % | 6 % | 64 % |
+| Petit avantage | 1,5 % | 42 % | 21 % | 36 % |
+| Bon avantage (+0,35 R/trade) | 1 % | 45 % | 3 % | 53 % |
+| **Bon avantage** | **1,5 %** | **59 %** | **12 %** | 30 % |
+| Bon avantage | 2 % | 62 % | 23 % | 15 % |
+| Bon avantage | 3 % | 43 % | 56 % | 1 % |
+
+- **Moins d'un mois** est réaliste avec une stratégie qui a un vrai avantage et **1 à 1,5 %** de risque par trade.
+- **Au-delà de 2 %**, on échoue plus souvent qu'on ne réussit.
+- **Sans avantage**, on peut réussir par chance, mais on paie beaucoup de challenges.
+
+Avec vos propres résultats de backtest MT5 (un résultat par ligne, en R) :
+
+```bash
+pip install numpy
+python mt5/ftmo_sim.py --trades mes_trades_R.txt --per-day 1.5
+```
+
 ## Règles FTMO à respecter
 
 - Votre propre EA est autorisé. Un EA acheté et utilisé par beaucoup de traders peut entraîner un refus.

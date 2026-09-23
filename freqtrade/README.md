@@ -69,6 +69,17 @@ La meilleure chance de x100 trouvée est d'environ **1 sur 70**, et elle vient a
 
 Limites : le coût du financement (funding) n'est compté que sur les 3 derniers mois (OKX ne donne pas plus d'historique), ce qui flatte un peu les positions longues. Un backtest n'est jamais une promesse.
 
+## Leçon d'optimisation : ne pas croire le meilleur backtest
+
+L'optimisation automatique (`freqtrade hyperopt`, 150 essais, 2022-2024, levier x2) a trouvé pour TrendRegime un réglage qui paraissait meilleur. Sur 2025-2026, jamais vue, il s'effondre :
+
+| Réglage TrendRegime (x2) | 2022-2024 | Baisse max | Sharpe | **2025-2026** | Baisse max |
+|---|---|---|---|---|---|
+| Base : momentum 30 j, BTC > SMA 100, cible de volatilité 0,5 | +174 % | −24 % | 1,11 | **+38 %** | −18 % |
+| « Optimisé » : 15 j, SMA 114, cible 0,21 | +55 % | −6 % | 1,56 | **−10 %** | −18 % |
+
+Le réglage « optimisé » collait trop aux données passées (sur-optimisation). On garde le réglage de base : il vient de la littérature, et les variantes proches (14, 30, 60 jours) donnent toutes des résultats positifs dans `tools/explore.py`. Le bouton « Optimiser » du panel fait le même test : il choisit sur 2022-2024 puis affiche le résultat 2025-2026.
+
 ## Lancer le panel en faux wallet (sur votre PC)
 
 Prérequis : [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows / Mac / Linux).

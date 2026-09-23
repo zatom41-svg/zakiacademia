@@ -23,7 +23,7 @@ from za_common import ZaBase
 class TrendRegime(ZaBase):
     timeframe = "1d"
     can_short = False
-    startup_candle_count = 120
+    startup_candle_count = 210
 
     lookback = IntParameter(14, 90, default=30, space="buy")
     btc_sma = IntParameter(50, 200, default=100, space="buy")
@@ -41,29 +41,31 @@ class TrendRegime(ZaBase):
         import talib.abstract as ta
 
         dataframe["atr"] = ta.ATR(dataframe, timeperiod=14)
-        dataframe["ret"] = dataframe["close"].pct_change(self.lookback.value)
         dataframe["vol"] = dataframe["close"].pct_change().rolling(30).std() * np.sqrt(365)
-
-        btc = self.dp.get_pair_dataframe(self.btc_pair, self.timeframe).copy()
-        btc["btc_up"] = (btc["close"] > btc["close"].rolling(self.btc_sma.value).mean()).astype(int)
-        dataframe = merge_informative_pair(
-            dataframe, btc[["date", "btc_up"]], self.timeframe, self.timeframe, ffill=True
+        btc = self.dp.get_pair_dataframe(self.btc_pair, self.timeframe)[["date", "close"]].rename(
+            columns={"close": "btc_close"}
         )
-        return dataframe
+        return merge_informative_pair(dataframe, btc, self.timeframe, self.timeframe, ffill=True)
+
+    # Les paramètres optimisables sont appliqués ici (et non dans
+    # populate_indicators) pour que l'hyperopt les fasse vraiment varier.
+    def _signals(self, dataframe: DataFrame):
+        momentum_up = dataframe["close"].pct_change(self.lookback.value) > 0
+        btc_close = dataframe[f"btc_close_{self.timeframe}"]
+        btc_up = btc_close > btc_close.rolling(self.btc_sma.value).mean()
+        return momentum_up, btc_up
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        momentum_up, btc_up = self._signals(dataframe)
         dataframe.loc[
-            (dataframe["ret"] > 0) & (dataframe[f"btc_up_{self.timeframe}"] == 1)
-            & (dataframe["volume"] > 0),
+            momentum_up & btc_up & (dataframe["volume"] > 0),
             ["enter_long", "enter_tag"],
         ] = (1, "momentum_regime")
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe.loc[
-            (dataframe["ret"] <= 0) | (dataframe[f"btc_up_{self.timeframe}"] == 0),
-            ["exit_long", "exit_tag"],
-        ] = (1, "regime_off")
+        momentum_up, btc_up = self._signals(dataframe)
+        dataframe.loc[~momentum_up | ~btc_up, ["exit_long", "exit_tag"]] = (1, "regime_off")
         return dataframe
 
     def custom_stake_amount(self, pair, current_time, current_rate, proposed_stake,
