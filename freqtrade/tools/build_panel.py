@@ -35,10 +35,13 @@ def main() -> None:
             r.pop("equity_daily", None)
             summary.append(r)
 
+    mc_path = ROOT / "results" / "montecarlo_6mois.json"
+    mc = json.loads(mc_path.read_text()) if mc_path.exists() else []
+
     tpl = (REPO / "panel" / "template.html").read_text(encoding="utf-8")
     html = tpl.replace("/*__CANDLES__*/null", json.dumps(candles, separators=(",", ":"))).replace(
         "/*__SUMMARY__*/null", json.dumps(summary, separators=(",", ":"), default=str)
-    )
+    ).replace("/*__MC__*/null", json.dumps(mc, separators=(",", ":")))
     out = REPO / "panel" / "index.html"
     out.write_text(html, encoding="utf-8")
     print(f"{out} ({len(html) / 1024:.0f} Ko, {len(idx)} jours, {len(summary)} backtests)")
