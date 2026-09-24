@@ -11,3 +11,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Exports MT5 (données locales de l’utilisateur)
+mt5/data/ftmo/

@@ -9,6 +9,10 @@ Laboratoire de trading automatisé.
 | [`mt5/`](mt5/) | EA MetaTrader 5 `FTMO_TrendBreakout.mq5` avec les protections FTMO, et un simulateur de challenge. |
 | [`docs/`](docs/) | Rapport de recherche : bots open source, IA et Claude, prop firms, rentabilité réelle. |
 
+## Backtests MT5 faits par Claude Code sur votre PC
+
+Le dépôt contient un skill Claude Code, `.claude/skills/mt5-backtest`. Lancez Claude Code dans ce dossier, sur le PC Windows où MT5 est installé, puis demandez par exemple « backteste tous les actifs FTMO ». Claude exporte l'historique de votre MT5, lance le laboratoire `mt5/lab_ftmo.py` et vous résume les résultats. Il ne passe jamais d'ordres.
+
 ## En bref
 
 - **Une stratégie :** acheter les cryptos qui montent depuis 30 jours, seulement quand le BTC est au-dessus de sa moyenne 200 jours.
