@@ -2,6 +2,12 @@
 
 Un robot MetaTrader 5 avec **deux stratégies au choix** et les règles FTMO codées en dur pour ne jamais les dépasser. On le pose sur **6 graphiques** (un par réglage) pour faire environ **2 trades par jour** au total.
 
+## Bot OR prêt à l'emploi : `ZA_Gold_Creux` et `ZA_Gold_Tendance`
+
+Deux fichiers avec les meilleurs réglages **déjà mis par défaut** : il suffit de les compiler et de les glisser sur XAUUSD.
+- `ZA_Gold_Creux.mq5` : graphique XAUUSD, n'importe quelle unité (il travaille en H1).
+- `ZA_Gold_Tendance.mq5` : graphique XAUUSD, n'importe quelle unité (il travaille en D1).
+
 ## Bot OR (v1.30) : 2 graphiques XAUUSD
 
 Trouvé par `gold_lab.py` : 6 familles de stratégies testées sur l'or (PAXG H1, 2021 → sept. 2026). Choix sur 2021-2023, vérification sur 2024-2026. La cassure H1 (ancien réglage) **perd** : −7,9 % en 2024 dans votre testeur MT5.
