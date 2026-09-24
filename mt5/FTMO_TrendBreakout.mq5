@@ -17,7 +17,7 @@
 //|   - fermeture avant le week-end                                  |
 //+------------------------------------------------------------------+
 #property copyright "zakiacademia"
-#property version   "1.30"
+#property version   "1.40"
 
 #include <Trade/Trade.mqh>
 
@@ -47,6 +47,8 @@ input double          InpRsiLevel       = 5;         // Achat si RSI(2) < x, ven
 input double          InpRsiTpAtr       = 1.0;       // Objectif = ATR x
 input int             InpRsiMaxBars     = 6;         // Sortie apres x bougies au maximum
 input int             InpRsiExitSma     = 5;         // Sortie des que la cloture > moyenne x (0 = off)
+input int             InpDailyTrendSma  = 0;         // Filtre : achat seulement si la cloture D1 d'hier > SMA x jours (0 = off)
+input double          InpVolFilterMax   = 0;         // Filtre : pas d'entree si ATR(14) / ATR(480) > x (0 = off)
 
 input group "=== Mode Tendance ==="
 input int             InpTrendSma       = 50;        // Achat si cloture > moyenne x, sortie en dessous
@@ -82,6 +84,8 @@ int      hAtr = INVALID_HANDLE;
 int      hRsi = INVALID_HANDLE;
 int      hSmaExit  = INVALID_HANDLE;
 int      hSmaTrend = INVALID_HANDLE;
+int      hDailySma = INVALID_HANDLE;
+int      hAtrLong  = INVALID_HANDLE;
 datetime lastBarTime   = 0;
 datetime lastManageMin = 0;
 datetime lastTickMin   = 0;
@@ -105,7 +109,12 @@ int OnInit()
    if(InpRsiExitSma > 0)
       hSmaExit = iMA(_Symbol, InpTimeframe, InpRsiExitSma, 0, MODE_SMA, PRICE_CLOSE);
    hSmaTrend = iMA(_Symbol, InpTimeframe, InpTrendSma, 0, MODE_SMA, PRICE_CLOSE);
-   if(hSmaTrend == INVALID_HANDLE || (InpRsiExitSma > 0 && hSmaExit == INVALID_HANDLE))
+   if(InpDailyTrendSma > 0)
+      hDailySma = iMA(_Symbol, PERIOD_D1, InpDailyTrendSma, 0, MODE_SMA, PRICE_CLOSE);
+   if(InpVolFilterMax > 0)
+      hAtrLong = iATR(_Symbol, InpTimeframe, 480);
+   if(hSmaTrend == INVALID_HANDLE || (InpRsiExitSma > 0 && hSmaExit == INVALID_HANDLE)
+      || (InpDailyTrendSma > 0 && hDailySma == INVALID_HANDLE) || (InpVolFilterMax > 0 && hAtrLong == INVALID_HANDLE))
    {
       Print("Erreur : impossible de creer les moyennes mobiles");
       return INIT_FAILED;
@@ -143,6 +152,8 @@ void OnDeinit(const int reason)
    if(hRsi != INVALID_HANDLE) IndicatorRelease(hRsi);
    if(hSmaExit != INVALID_HANDLE) IndicatorRelease(hSmaExit);
    if(hSmaTrend != INVALID_HANDLE) IndicatorRelease(hSmaTrend);
+   if(hDailySma != INVALID_HANDLE) IndicatorRelease(hDailySma);
+   if(hAtrLong != INVALID_HANDLE) IndicatorRelease(hAtrLong);
    Comment("");
 }
 
@@ -325,6 +336,7 @@ void CheckEntry()
 
    if(InpMode == ZA_RSI2)
    {
+      if(!FiltersOk(atr[0])) return;
       double rsi[];
       if(CopyBuffer(hRsi, 0, 1, 1, rsi) != 1) return;
       double tpDist = (InpRsiTpAtr > 0) ? atr[0] * InpRsiTpAtr : 0;
@@ -339,6 +351,25 @@ void CheckEntry()
       OpenTrade(ORDER_TYPE_BUY, slDist, 0);
    else if(InpAllowShort && close1 < channelLow && close1 < ema[0])
       OpenTrade(ORDER_TYPE_SELL, slDist, 0);
+}
+
+// Filtres du mode RSI(2) : tendance journaliere haussiere et volatilite normale
+bool FiltersOk(const double atrNow)
+{
+   if(InpDailyTrendSma > 0)
+   {
+      double dsma[];
+      double dclose = iClose(_Symbol, PERIOD_D1, 1);
+      if(CopyBuffer(hDailySma, 0, 1, 1, dsma) != 1 || dclose == 0) return false;
+      if(dclose <= dsma[0]) return false;
+   }
+   if(InpVolFilterMax > 0)
+   {
+      double al[];
+      if(CopyBuffer(hAtrLong, 0, 1, 1, al) != 1 || al[0] <= 0) return false;
+      if(atrNow / al[0] >= InpVolFilterMax) return false;
+   }
+   return true;
 }
 
 // tpDist > 0 : objectif fixe en prix ; sinon InpTakeProfitR (0 = pas d'objectif)

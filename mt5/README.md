@@ -2,7 +2,21 @@
 
 Un robot MetaTrader 5 avec **deux stratégies au choix** et les règles FTMO codées en dur pour ne jamais les dépasser. On le pose sur **6 graphiques** (un par réglage) pour faire environ **2 trades par jour** au total.
 
-## Bot OR prêt à l'emploi : `ZA_Gold_Creux` et `ZA_Gold_Tendance`
+## Bot OR prêt à l'emploi : `ZA_Gold_Creux` et `ZA_Gold_Tendance` (v1.40)
+
+**v1.40 de ZA_Gold_Creux** : ajoute deux filtres :
+- **tendance :** il n'achète que si l'or a clôturé la veille au-dessus de sa moyenne 50 jours ;
+- **volatilité :** il n'entre pas quand l'or est anormalement agité.
+
+Autres changements : stop à 4 ATR, sortie au plus tard après 12 h, risque de 1,5 % par trade. Backtest Python sur PAXG :
+
+| Année | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| Avant (v1.30, 1 %) | +11 % | **−9 %** | +17 % | +16 % | +2 % | 0 % |
+| v1.40 à 1 % | +2 % | +1 % | +8 % | +6 % | +1 % | +3 % |
+| v1.40 à 2 % | +4 % | +2 % | +17 % | +13 % | +2 % | +6 % |
+
+Plus aucune année perdante et des baisses bien plus petites, mais des gains plus faibles pendant les grandes années. Pire baisse de la v1.40 : −7 % à 1 %, −13 % à 2 % (en 2025).
 
 Deux fichiers avec les meilleurs réglages **déjà mis par défaut** : il suffit de les compiler et de les glisser sur XAUUSD.
 - `ZA_Gold_Creux.mq5` : graphique XAUUSD, n'importe quelle unité (il travaille en H1).
