@@ -58,9 +58,7 @@ Le tableau de bord (en haut à gauche du graphique) affiche l'equity, le résult
 ## Tout tester automatiquement (kit `tests_auto/`)
 
 1. **Compilez l'EA** sous le nom exact `FTMO_TrendBreakout` (dans MQL5\Experts).
-2. Ouvrez `tests_auto/lancer_les_tests.bat` avec le Bloc-notes et remplissez 2 lignes :
-   - `MT5` : le chemin de `terminal64.exe` (clic droit sur le raccourci MT5 → Propriétés → Cible) ;
-   - `DATA` : le dossier ouvert par **Fichier → Ouvrir le dossier des données** (copiez la barre d'adresse).
+2. Extrayez le kit (clic droit sur le zip → **Extraire tout**). Laissez `lancer_les_tests.bat` dans le dossier `tests_auto`, avec les fichiers `.ini` et `.set`. Il n'y a rien à modifier : le fichier trouve tout seul MT5 et l'EA, et vous demande le chemin seulement s'il ne le trouve pas.
 3. **Fermez MT5**, puis double-cliquez sur `lancer_les_tests.bat`. Les 5 backtests (or cassure, or RSI(2), US100, BTC, ETH) s'enchaînent en « OHLC sur M1 » du 01/01/2023 au 20/09/2026, et les rapports arrivent dans `DATA\za_reports`.
 4. Envoyez-moi les rapports (fichiers .htm) : je compare avec mes résultats et j'ajuste.
 
