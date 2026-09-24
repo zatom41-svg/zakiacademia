@@ -1,6 +1,6 @@
-# Panel multi-bots en FAUX WALLET (dry-run) : aucun ordre réel n'est envoyé.
+# 3 bots TrendRegime en FAUX WALLET (dry-run), levier x1, x2 et x3 : aucun ordre réel.
 # Lancer :   docker compose up -d
-# Panel :    http://localhost:8081  (FreqUI) puis ajouter les autres bots 8082..8084
+# Suivre :   http://localhost:8081  (FreqUI), puis ajouter les bots 8082 et 8083
 x-bot: &bot
   image: freqtradeorg/freqtrade:stable
   restart: unless-stopped
@@ -8,42 +8,32 @@ x-bot: &bot
     - "./user_data:/freqtrade/user_data"
 
 services:
+  trendregime-x1:
+    <<: *bot
+    container_name: za-trendregime-x1
+    ports:
+      - "127.0.0.1:8081:8080"
+    command: >
+      trade --logfile /freqtrade/user_data/logs/trendregime-x1.log
+      --config /freqtrade/user_data/config.json
+      --config /freqtrade/user_data/bots/trendregime-x1.json
+
   trendregime-x2:
     <<: *bot
     container_name: za-trendregime-x2
     ports:
-      - "127.0.0.1:8081:8080"
+      - "127.0.0.1:8082:8080"
     command: >
       trade --logfile /freqtrade/user_data/logs/trendregime-x2.log
       --config /freqtrade/user_data/config.json
       --config /freqtrade/user_data/bots/trendregime-x2.json
 
-  trendregime-x5:
+  trendregime-x3:
     <<: *bot
-    container_name: za-trendregime-x5
-    ports:
-      - "127.0.0.1:8082:8080"
-    command: >
-      trade --logfile /freqtrade/user_data/logs/trendregime-x5.log
-      --config /freqtrade/user_data/config.json
-      --config /freqtrade/user_data/bots/trendregime-x5.json
-
-  dipreversion-x3:
-    <<: *bot
-    container_name: za-dipreversion-x3
+    container_name: za-trendregime-x3
     ports:
       - "127.0.0.1:8083:8080"
     command: >
-      trade --logfile /freqtrade/user_data/logs/dipreversion-x3.log
+      trade --logfile /freqtrade/user_data/logs/trendregime-x3.log
       --config /freqtrade/user_data/config.json
-      --config /freqtrade/user_data/bots/dipreversion-x3.json
-
-  supertrend-x3:
-    <<: *bot
-    container_name: za-supertrend-x3
-    ports:
-      - "127.0.0.1:8084:8080"
-    command: >
-      trade --logfile /freqtrade/user_data/logs/supertrend-x3.log
-      --config /freqtrade/user_data/config.json
-      --config /freqtrade/user_data/bots/supertrend-x3.json
+      --config /freqtrade/user_data/bots/trendregime-x3.json

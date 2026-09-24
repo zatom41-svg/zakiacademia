@@ -1,5 +1,5 @@
 {
-    "strategy": "MomentumTrend",
+    "strategy": "TrendRegime",
     "za_leverage": 2.0,
     "za_risk_per_trade": 0.02,
     "dry_run": true,
@@ -74,7 +74,7 @@
         "username": "zaki",
         "password": "CHANGEZ-MOI"
     },
-    "bot_name": "zakiacademia-momentum",
+    "bot_name": "zakiacademia-trendregime",
     "initial_state": "running",
     "internals": {
         "process_throttle_secs": 5

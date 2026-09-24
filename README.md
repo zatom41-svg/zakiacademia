@@ -1,20 +1,20 @@
 # zakiacademia
 
-Laboratoire de trading automatisé : bots crypto en faux wallet, EA MetaTrader 5 pour les challenges FTMO et un panel pour tester l'effet du levier.
+Laboratoire de trading automatisé.
 
 | Dossier | Contenu |
 |---|---|
-| [`panel/`](panel/) | **Labo Levier Crypto** : page web autonome. Choisissez une stratégie, un levier de x1 à x50 et une période, et voyez ce que devient un wallet de 1 000 €. Ouvrez `panel/index.html` dans un navigateur. |
-| [`freqtrade/`](freqtrade/) | Stratégies Freqtrade (3 actives, 4 archivées), panel multi-bots en dry-run (Docker), outils de backtest et d'optimisation. |
-| [`mt5/`](mt5/) | EA `FTMO_TrendBreakout.mq5` : suivi de tendance avec protections FTMO (perte journalière, perte max, arrêt à l'objectif). |
+| [`panel/`](panel/) | **Labo Levier Crypto** : ouvrez `panel/index.html` dans un navigateur. Choisissez des dates précises (ou 7 jours, 30 jours, 2026…) et un levier, et voyez le faux wallet évoluer jour par jour. |
+| [`freqtrade/`](freqtrade/) | Le bot crypto **TrendRegime** et 3 faux wallets prêts à lancer avec Docker (x1, x2, x3). |
+| [`mt5/`](mt5/) | EA MetaTrader 5 `FTMO_TrendBreakout.mq5` avec les protections FTMO, et un simulateur de challenge. |
 | [`docs/`](docs/) | Rapport de recherche : bots open source, IA et Claude, prop firms, rentabilité réelle. |
 
 ## En bref
 
-- **Meilleure stratégie trouvée :** `TrendRegime` (momentum 30 jours + filtre de régime BTC). Elle gagne sur 2022-2024 **et** sur 2025-2026, une période jamais utilisée pour la régler.
-- **Le levier :** x2-x3 améliore le résultat, x10 et plus multiplie les liquidations et les baisses de −70 %.
-- **x100 en 6 mois :** la meilleure chance trouvée est d'environ 1 sur 70 (TrendRegime x10), avec près d'une chance sur deux de perdre la moitié du wallet.
-- **Complément :** `DipReversion` (achat de creux) gagne peu mais régulièrement, avec des baisses sous 8 % à x3.
-- Tout tourne en **faux wallet**. Aucun ordre réel n'est envoyé tant que vous ne mettez pas vous-même `dry_run: false` et une clé API.
+- **Une stratégie :** acheter les cryptos qui montent depuis 30 jours, seulement quand le BTC est au-dessus de sa moyenne 200 jours.
+- **Résultats (Freqtrade, levier x2, 1 000 € de départ) :** 0 % en 2022 (hors marché pendant le krach), +164 % en 2023, +66 % en 2024, +6 % en 2025, +35 % en 2026 (au 23 septembre). **Aucune année perdante.**
+- **Levier conseillé : x2.** À partir de x5, des années deviennent perdantes. À x10 et plus, le wallet peut être détruit.
+- **x100 en 6 mois :** environ 1 chance sur 100, avec plus d'une chance sur deux de perdre la moitié.
+- Tout tourne en **faux wallet**. Aucun ordre réel n'est envoyé tant que vous ne mettez pas vous-même une clé API.
 
 *Ceci n'est pas un conseil en investissement. Les performances passées ne préjugent pas des performances futures.*

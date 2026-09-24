@@ -1,7 +1,9 @@
 """
-Construit panel/index.html (page autonome) à partir de panel/template.html :
-  - injecte les bougies journalières OKX des 8 paires (pour le simulateur)
-  - injecte les résultats Freqtrade de results/summary.json (tableau validé)
+Construit panel/index.html (page autonome) à partir de panel/template.html en y
+injectant :
+  - les bougies journalières OKX des 8 paires (le simulateur tourne dans la page)
+  - les résultats Freqtrade année par année (results/yearly.json)
+  - le Monte Carlo 6 mois (results/montecarlo_6mois.json)
 
 Usage (depuis freqtrade/) : python tools/build_panel.py
 """
@@ -17,6 +19,11 @@ DATA = ROOT / "user_data" / "data" / "okx" / "futures"
 PAIRS = ["BTC", "ETH", "SOL", "BNB", "XRP", "DOGE", "AVAX", "LINK"]
 
 
+def read_json(name: str) -> list:
+    path = ROOT / "results" / name
+    return json.loads(path.read_text()) if path.exists() else []
+
+
 def main() -> None:
     frames = {p: pd.read_feather(DATA / f"{p}_USDT_USDT-1d-futures.feather").set_index("date") for p in PAIRS}
     idx = frames["BTC"].index
@@ -28,23 +35,17 @@ def main() -> None:
             for k in ("open", "high", "low", "close")
         }
 
-    summary_path = ROOT / "results" / "summary.json"
-    summary = []
-    if summary_path.exists():
-        for r in json.loads(summary_path.read_text()):
-            r.pop("equity_daily", None)
-            summary.append(r)
-
-    mc_path = ROOT / "results" / "montecarlo_6mois.json"
-    mc = json.loads(mc_path.read_text()) if mc_path.exists() else []
+    yearly = [{k: r[k] for k in ("strategy", "leverage", "period", "profit_pct", "max_drawdown_pct", "trades", "liquidations")}
+              for r in read_json("yearly.json") if "error" not in r]
+    mc = read_json("montecarlo_6mois.json")
 
     tpl = (REPO / "panel" / "template.html").read_text(encoding="utf-8")
-    html = tpl.replace("/*__CANDLES__*/null", json.dumps(candles, separators=(",", ":"))).replace(
-        "/*__SUMMARY__*/null", json.dumps(summary, separators=(",", ":"), default=str)
-    ).replace("/*__MC__*/null", json.dumps(mc, separators=(",", ":")))
+    html = (tpl.replace("/*__CANDLES__*/null", json.dumps(candles, separators=(",", ":")))
+               .replace("/*__YEARLY__*/null", json.dumps(yearly, separators=(",", ":")))
+               .replace("/*__MC__*/null", json.dumps(mc, separators=(",", ":"))))
     out = REPO / "panel" / "index.html"
     out.write_text(html, encoding="utf-8")
-    print(f"{out} ({len(html) / 1024:.0f} Ko, {len(idx)} jours, {len(summary)} backtests)")
+    print(f"{out} ({len(html) / 1024:.0f} Ko, {len(idx)} jours, {len(yearly)} backtests Freqtrade)")
 
 
 if __name__ == "__main__":

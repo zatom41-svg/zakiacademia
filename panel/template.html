@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --bg:#F2F3EF; --surface:#FFFFFF; --surface-2:#E8EAE4; --ink:#17201D; --ink-2:#4A5550; --line:#D3D7CF;
-  --accent:#9A6A12; --accent-soft:#F3E6C8; --gain:#1E7F55; --loss:#BD3B34; --warn:#B7791F; --ref:#6B7C93;
+  --bg:#F2F3EF; --surface:#FFFFFF; --surface-2:#E8EAE4; --ink:#17201D; --ink-2:#4F5A55; --line:#D3D7CF;
+  --accent:#9A6A12; --accent-soft:#F3E6C8; --gain:#1E7F55; --gain-soft:#DDEFE5; --loss:#BD3B34; --loss-soft:#F6DEDB; --warn:#B7791F; --ref:#6B7C93;
   --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -14,535 +14,387 @@
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#0F1513; --surface:#161E1B; --surface-2:#1F2A26; --ink:#E3E8E2; --ink-2:#A2ADA7; --line:#2C3833;
-    --accent:#DDA94A; --accent-soft:#3A3020; --gain:#4CC08A; --loss:#EF6B63; --warn:#E3A54A; --ref:#8FA3BD;
+    --accent:#DDA94A; --accent-soft:#3A3020; --gain:#4CC08A; --gain-soft:#173628; --loss:#EF6B63; --loss-soft:#3C1E1C; --warn:#E3A54A; --ref:#8FA3BD;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#0F1513; --surface:#161E1B; --surface-2:#1F2A26; --ink:#E3E8E2; --ink-2:#A2ADA7; --line:#2C3833;
-  --accent:#DDA94A; --accent-soft:#3A3020; --gain:#4CC08A; --loss:#EF6B63; --warn:#E3A54A; --ref:#8FA3BD;
+  --accent:#DDA94A; --accent-soft:#3A3020; --gain:#4CC08A; --gain-soft:#173628; --loss:#EF6B63; --loss-soft:#3C1E1C; --warn:#E3A54A; --ref:#8FA3BD;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;padding-inline:16px;padding-block:20px 48px}
-.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
-h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,36px);line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,34px);line-height:1.1;margin:0;letter-spacing:-.01em}
 h2{font-family:var(--display);font-weight:700;font-size:18px;margin:0;text-wrap:balance}
-.sub{color:var(--ink-2);max-width:65ch;margin:6px 0 0}
-.tag{font-family:var(--mono);font-size:12px;color:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:3px 8px;white-space:nowrap}
-.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:860px){.grid{grid-template-columns:1fr}}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.sub{color:var(--ink-2);max-width:68ch;margin:6px 0 0}
+.tag{font-family:var(--mono);font-size:12px;color:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:3px 8px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
 .field{display:flex;flex-direction:column;gap:6px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-select,input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
-select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.lev{display:flex;align-items:baseline;justify-content:space-between}
-.levval{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--accent)}
-input[type=range]{width:100%;accent-color:var(--accent)}
-.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
-.check{display:flex;gap:8px;align-items:flex-start;font-size:13px}
-.check input{margin-top:3px;accent-color:var(--accent)}
-.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.seg button{flex:1;font:inherit;font-size:12px;padding:7px 4px;background:transparent;color:var(--ink-2);border:0;cursor:pointer}
-.seg button[aria-pressed=true]{background:var(--accent-soft);color:var(--ink);font-weight:600}
-.btn{font:inherit;font-weight:600;padding:9px 12px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);cursor:pointer}
-.btn.ghost{background:transparent;color:var(--accent)}
-.btn:disabled{opacity:.6;cursor:progress}
+.dates{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dates span{color:var(--ink-2);font-size:13px}
+input[type=date],input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+input[type=number]{width:100%}
+input:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:13px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;color:var(--ink-2);font-size:13px}
+.adv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px}
+.check input{accent-color:var(--accent)}
 .note{font-size:12.5px;color:var(--ink-2);margin:0}
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-@media (max-width:560px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .kpi{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px}
 .kpi .v{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums;font-weight:500}
 .kpi .s{font-size:12px;color:var(--ink-2)}
 .pos{color:var(--gain)} .neg{color:var(--loss)} .warnc{color:var(--warn)}
-.chartbox{position:relative;width:100%;height:340px}
+.chartbox{position:relative;width:100%;height:300px}
 canvas{display:block;width:100%;height:100%}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink-2);align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink-2)}
 .sw{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.two{display:grid;grid-template-columns:1fr;gap:18px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
 .tablebox{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+th,td{padding:6px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
 th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
 th:first-child,td:first-child{text-align:left}
 td.m{font-family:var(--mono)}
-tr.cur td{background:var(--accent-soft)}
-.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid currentColor}
-.goal{display:flex;flex-wrap:wrap;gap:8px}
-.goal span{font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:4px;background:var(--surface-2)}
+td.ev{text-align:left;white-space:normal;min-width:200px;font-size:12.5px}
+.cell-pos{background:var(--gain-soft);color:var(--gain)} .cell-neg{background:var(--loss-soft);color:var(--loss)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid currentColor;margin:1px 2px 1px 0}
 .headrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
-.optout{font-size:13px;background:var(--surface-2);border-radius:6px;padding:10px 12px}
-.optout[hidden]{display:none}
-footer{color:var(--ink-2);font-size:12.5px;max-width:80ch}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.btn{font:inherit;font-weight:600;padding:7px 12px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;align-self:flex-start}
+.verdict{font-size:14px;margin:0;max-width:75ch}
+footer{color:var(--ink-2);font-size:12.5px;max-width:85ch}
 </style>
 
 <div class="wrap">
   <header>
     <div>
       <h1>Labo Levier Crypto</h1>
-      <p class="sub">Un faux wallet pour tester des stratégies de trading avec du levier sur 8 grosses cryptos (futures OKX, bougies journalières depuis 2021). Aucun argent réel, aucun ordre envoyé.</p>
+      <p class="sub">Faux wallet qui rejoue le bot <strong>TrendRegime</strong> sur 8 cryptos (BTC, ETH, SOL, BNB, XRP, DOGE, AVAX, LINK), jour par jour, sur les vraies bougies OKX. Aucun argent réel.</p>
     </div>
     <span class="tag" id="dataTag">données</span>
   </header>
 
-  <div class="grid">
-    <aside class="panel" aria-label="Réglages">
-      <div class="field">
-        <label class="label" for="strategy">Stratégie</label>
-        <select id="strategy"></select>
-        <p class="note" id="stratDesc"></p>
-      </div>
-      <div id="params" class="row2"></div>
-
-      <div class="field">
-        <div class="lev"><label class="label" for="leverage">Levier</label><span class="levval" id="levOut">x2</span></div>
-        <input type="range" id="leverage" min="0" max="10" step="1" value="1">
-        <div class="ticks"><span>1</span><span>2</span><span>3</span><span>5</span><span>10</span><span>20</span><span>50</span></div>
-      </div>
-
-      <div class="row2">
-        <div class="field"><label class="label" for="wallet">Wallet (€)</label><input type="number" id="wallet" value="1000" min="10" step="100"></div>
-        <div class="field"><label class="label" for="fee">Frais / trade (%)</label><input type="number" id="fee" value="0.08" min="0" step="0.01"></div>
-      </div>
-
+  <section class="panel" aria-label="Réglages">
+    <div class="controls">
       <div class="field">
         <span class="label">Période</span>
-        <div class="seg" role="group" aria-label="Période">
-          <button type="button" data-period="all" aria-pressed="true">2022 → auj.</button>
-          <button type="button" data-period="is" aria-pressed="false">2022-2024</button>
-          <button type="button" data-period="oos" aria-pressed="false">2025 → auj.</button>
+        <div class="dates">
+          <input type="date" id="from" aria-label="Du"><span>au</span><input type="date" id="to" aria-label="Au">
+        </div>
+        <div class="chips" id="presets">
+          <button type="button" data-preset="7">7 jours</button>
+          <button type="button" data-preset="30">30 jours</button>
+          <button type="button" data-preset="90">3 mois</button>
+          <button type="button" data-preset="2026">2026</button>
+          <button type="button" data-preset="2025">2025</button>
+          <button type="button" data-preset="2024">2024</button>
+          <button type="button" data-preset="2023">2023</button>
+          <button type="button" data-preset="2022">2022</button>
+          <button type="button" data-preset="all">Tout</button>
         </div>
       </div>
+      <div class="field">
+        <span class="label">Levier</span>
+        <div class="chips" id="levs"></div>
+        <p class="note" id="levNote"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="wallet">Wallet de départ (€)</label>
+        <input type="number" id="wallet" value="1000" min="10" step="100">
+        <label class="check"><input type="checkbox" id="showHold" checked> Comparer avec « acheter et garder »</label>
+      </div>
+    </div>
+    <details>
+      <summary>Réglages avancés de la stratégie</summary>
+      <div class="adv">
+        <div class="field"><label class="label" for="lookback">Momentum (jours)</label><input type="number" id="lookback" value="30" min="5" max="120"></div>
+        <div class="field"><label class="label" for="btcSma">Moyenne BTC (jours)</label><input type="number" id="btcSma" value="200" min="0" max="300"></div>
+        <div class="field"><label class="label" for="volTarget">Cible de volatilité</label><input type="number" id="volTarget" value="0.5" min="0.1" max="2" step="0.1"></div>
+        <button type="button" class="btn" id="reset">Revenir aux réglages optimisés</button>
+      </div>
+      <p class="note" style="margin-top:8px">Réglages optimisés : 30 / 200 / 0,5. Choisis parce qu'ils ne perdent aucune année de 2022 à 2026, et retenus aussi par le test walk-forward.</p>
+    </details>
+  </section>
 
-      <label class="check"><input type="checkbox" id="btcFilter" checked> <span>Filtre de régime : n'acheter que si le BTC est au-dessus de sa moyenne 100 jours</span></label>
-      <label class="check"><input type="checkbox" id="volTarget" checked> <span>Taille selon la volatilité (moins de mise sur les cryptos agitées)</span></label>
-      <label class="check"><input type="checkbox" id="longShort"> <span>Autoriser la vente à découvert (short)</span></label>
+  <p class="verdict" id="verdict"></p>
 
-      <button type="button" class="btn" id="optBtn">Optimiser sur 2022-2024</button>
-      <div class="optout" id="optOut" hidden></div>
-    </aside>
+  <section class="kpis" aria-label="Résultat de la période">
+    <div class="kpi"><span class="label">Wallet final</span><span class="v" id="kFinal">–</span><span class="s" id="kGain">–</span></div>
+    <div class="kpi"><span class="label">Pire baisse</span><span class="v" id="kDD">–</span><span class="s">depuis un sommet</span></div>
+    <div class="kpi"><span class="label">Jours gagnants</span><span class="v" id="kDays">–</span><span class="s" id="kDaysS">–</span></div>
+    <div class="kpi"><span class="label">Meilleur / pire jour</span><span class="v" id="kBest">–</span><span class="s" id="kWorst">–</span></div>
+    <div class="kpi"><span class="label">Liquidations</span><span class="v" id="kLiq">–</span><span class="s" id="kTrades">–</span></div>
+  </section>
 
-    <main style="display:flex;flex-direction:column;gap:20px;min-width:0">
-      <section class="kpis" aria-label="Résultats">
-        <div class="kpi"><span class="label">Wallet final</span><span class="v" id="kFinal">–</span><span class="s" id="kTotal">–</span></div>
-        <div class="kpi"><span class="label">Pire baisse</span><span class="v" id="kDD">–</span><span class="s">depuis un sommet</span></div>
-        <div class="kpi"><span class="label">Liquidations</span><span class="v" id="kLiq">–</span><span class="s" id="kTrades">–</span></div>
-        <div class="kpi"><span class="label">Rendement / an</span><span class="v" id="kCagr">–</span><span class="s" id="kSharpe">–</span></div>
-      </section>
+  <section class="panel">
+    <div class="headrow"><h2>Évolution du wallet</h2><span class="note" id="chartNote"></span></div>
+    <div class="chartbox"><canvas id="chart" aria-label="Courbe du wallet"></canvas></div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--accent)"></i>TrendRegime</span>
+      <span id="lgHold"><i class="sw" style="background:var(--ref)"></i>Acheter et garder (même levier)</span>
+      <span><i class="sw" style="background:var(--loss)"></i>Liquidation</span>
+    </div>
+  </section>
 
-      <section class="panel">
-        <div class="headrow">
-          <h2>Évolution du wallet</h2>
-          <div class="seg" role="group" aria-label="Échelle" style="width:170px">
-            <button type="button" data-scale="log" aria-pressed="true">Log</button>
-            <button type="button" data-scale="lin" aria-pressed="false">Linéaire</button>
-          </div>
-        </div>
-        <div class="chartbox"><canvas id="chart" aria-label="Courbe du wallet"></canvas></div>
-        <div class="legend">
-          <span><i class="sw" style="background:var(--accent)"></i>Stratégie</span>
-          <span><i class="sw" style="background:var(--ref)"></i>BTC acheté et gardé (x1)</span>
-          <span><i class="sw" style="background:var(--loss)"></i>Jour de liquidation</span>
-        </div>
-        <div>
-          <span class="label">Objectifs atteints</span>
-          <div class="goal" id="goals"></div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="headrow"><h2>Même stratégie, autre levier</h2><span class="note">période sélectionnée</span></div>
-        <div class="tablebox"><table id="levTable"></table></div>
-        <p class="note">Le levier multiplie les gains ET les pertes. Au-delà d'un certain point, une seule mauvaise journée liquide la position et le wallet ne s'en remet pas.</p>
-      </section>
-
-      <section class="panel">
-        <div class="headrow"><h2>Chances en 6 mois</h2><span class="note">20 000 trajectoires simulées à partir des vraies données 2022-2026</span></div>
-        <div class="tablebox"><table id="mcTable"></table></div>
-        <p class="note">On rejoue au hasard des blocs de 30 jours réels (hausses et krachs compris) pour estimer ce qui peut arriver sur les 6 prochains mois. « Ruine » = il reste moins de 5 % du wallet.</p>
-      </section>
-
-      <section class="panel">
-        <div class="headrow"><h2>Validé avec Freqtrade</h2><span class="note">backtests du vrai moteur, 1h/4h/1j, protections activées</span></div>
-        <div class="tablebox"><table id="ftTable"></table></div>
-        <p class="note">« Apprentissage » = 2022-2024, la période où les réglages ont été choisis. « Validation » = 2025-2026, jamais vue pendant les réglages : c'est elle qui compte.</p>
-      </section>
-
-      <section class="panel">
-        <h2>Derniers trades</h2>
-        <div class="tablebox"><table id="tradeTable"></table></div>
-      </section>
-    </main>
+  <div class="two">
+    <section class="panel">
+      <div class="headrow"><h2>Année par année</h2><span class="note" id="yearNote"></span></div>
+      <div class="tablebox"><table id="yearTable"></table></div>
+      <p class="note">« Freqtrade » = même stratégie rejouée par le vrai moteur du bot (entrées à l'ouverture, frais et financement OKX réels). Chaque année repart de 1 000 €.</p>
+    </section>
+    <section class="panel">
+      <div class="headrow"><h2>Mois par mois</h2><span class="note">% de gain du wallet</span></div>
+      <div class="tablebox"><table id="monthTable"></table></div>
+    </section>
   </div>
 
+  <section class="panel">
+    <div class="headrow"><h2>Journal jour par jour</h2><span class="note" id="journalNote"></span></div>
+    <div class="tablebox"><table id="journal"></table></div>
+    <button type="button" class="btn" id="more">Afficher 30 jours de plus</button>
+  </section>
+
+  <section class="panel">
+    <div class="headrow"><h2>Et sur les 6 prochains mois ?</h2><span class="note">20 000 scénarios tirés des vraies données 2022-2026</span></div>
+    <div class="tablebox"><table id="mcTable"></table></div>
+  </section>
+
   <footer>
-    Simulation simplifiée : décision à la clôture journalière, exécution au prix de clôture, frais appliqués à chaque changement de position (multipliés par le levier), liquidation d'une position si la mèche du jour dépasse ~90 % de la marge. Le coût du financement (funding) n'est pas compté, ce qui rend les positions longues un peu trop belles. Les performances passées ne garantissent rien.
+    Comment lire le journal : le bot décide à la clôture (minuit UTC) et achète ou vend à l'ouverture du jour suivant. Le résultat d'un jour inclut les frais (0,08 % par ordre, multipliés par le levier) et le financement des positions (0,03 % par jour du montant exposé). Une position est liquidée si la mèche du jour dépasse 90 % de sa marge. Les performances passées ne garantissent rien. Ce n'est pas un conseil en investissement.
   </footer>
 </div>
 
 <script>
 const CANDLES = /*__CANDLES__*/null;
-const SUMMARY = /*__SUMMARY__*/null;
+const YEARLY = /*__YEARLY__*/null;
 const MC = /*__MC__*/null;
-const LEVS = [1,2,3,5,10,20,50];
 const PAIRS = Object.keys(CANDLES.pairs);
 const D = CANDLES.dates;
-const IS_START = "2022-01-01", OOS_START = "2025-01-01";
+const LEVS = [1, 2, 3, 5, 10, 20];
+const FEE = 0.0008, FUND = 0.0003;
+const DEF = {lookback: 30, btcSma: 200, volTarget: 0.5};
+const MONTHS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 
 // ---------------------------------------------------------------- indicateurs
 const sma = (a, n) => { const o = new Array(a.length).fill(null); let s = 0, c = 0;
   for (let i = 0; i < a.length; i++) { if (a[i] == null) { s = 0; c = 0; continue; }
     s += a[i]; c++; if (c > n) { s -= a[i - n]; c = n; } if (c === n) o[i] = s / n; } return o; };
-const ema = (a, n) => { const o = new Array(a.length).fill(null); const k = 2 / (n + 1); let e = null, c = 0;
-  for (let i = 0; i < a.length; i++) { if (a[i] == null) { e = null; c = 0; continue; }
-    e = e == null ? a[i] : a[i] * k + e * (1 - k); c++; if (c >= n) o[i] = e; } return o; };
-const rollMax = (a, n) => a.map((_, i) => { if (i < n) return null; let m = -Infinity;
-  for (let j = i - n; j < i; j++) { if (a[j] == null) return null; m = Math.max(m, a[j]); } return m; });
-const rollMin = (a, n) => a.map((_, i) => { if (i < n) return null; let m = Infinity;
-  for (let j = i - n; j < i; j++) { if (a[j] == null) return null; m = Math.min(m, a[j]); } return m; });
-const std = (a, n) => a.map((_, i) => { if (i < n - 1) return null; let s = 0, q = 0;
-  for (let j = i - n + 1; j <= i; j++) { if (a[j] == null) return null; s += a[j]; q += a[j] * a[j]; }
-  const m = s / n; return Math.sqrt(Math.max(q / n - m * m, 0)); });
-const rets = c => c.map((v, i) => (i && v != null && c[i - 1] != null) ? v / c[i - 1] - 1 : null);
+function vol30(c) { const r = c.map((v, i) => (i && v != null && c[i - 1] != null) ? v / c[i - 1] - 1 : null);
+  return r.map((_, i) => { if (i < 30) return null; let s = 0, q = 0;
+    for (let j = i - 29; j <= i; j++) { if (r[j] == null) return null; s += r[j]; q += r[j] * r[j]; }
+    const m = s / 30; return Math.sqrt(Math.max((q - 30 * m * m) / 29, 0)) * Math.sqrt(365); }); }
+const VOL = {}; PAIRS.forEach(p => VOL[p] = vol30(CANDLES.pairs[p].close));
 
-function atr(p, n) {
-  const tr = p.close.map((c, i) => (i && c != null && p.close[i - 1] != null)
-    ? Math.max(p.high[i] - p.low[i], Math.abs(p.high[i] - p.close[i - 1]), Math.abs(p.low[i] - p.close[i - 1])) : null);
-  return ema(tr, n);
+// ---------------------------------------------------------------- stratégies (poids voulus à la clôture)
+function trendWeights(q) {
+  const btc = CANDLES.pairs.BTC.close, m = q.btcSma ? sma(btc, q.btcSma) : null;
+  const up = btc.map((v, i) => !q.btcSma || (m[i] != null && v > m[i]));
+  const W = {};
+  PAIRS.forEach(p => { const c = CANDLES.pairs[p].close;
+    W[p] = c.map((v, i) => { if (v == null || i < q.lookback || c[i - q.lookback] == null || !up[i]) return 0;
+      if (!(v > c[i - q.lookback])) return 0; const vol = VOL[p][i]; if (!vol) return 0; return Math.min(q.volTarget / vol, 1); }); });
+  return W;
 }
+function holdWeights() { const W = {}; PAIRS.forEach(p => W[p] = CANDLES.pairs[p].close.map(v => v == null ? 0 : 1)); return W; }
 
-function rsi(c, n) { const o = new Array(c.length).fill(null); let up = null, dn = null;
-  for (let i = 1; i < c.length; i++) { if (c[i] == null || c[i - 1] == null) { up = dn = null; continue; }
-    const d = c[i] - c[i - 1], u = Math.max(d, 0), w = Math.max(-d, 0);
-    if (up == null) { up = u; dn = w; } else { up = (up * (n - 1) + u) / n; dn = (dn * (n - 1) + w) / n; }
-    o[i] = dn === 0 ? 100 : 100 - 100 / (1 + up / dn); } return o; }
-
-// ---------------------------------------------------------------- stratégies
-// Chaque stratégie renvoie un tableau de positions voulues à la clôture : 1, -1 ou 0.
-const STRATS = {
-  trend_regime: {
-    name: "TrendRegime (momentum + régime)", longOnly: true,
-    desc: "Achète une crypto qui a monté sur N jours, seulement si le BTC est en tendance haussière. Meilleure stratégie trouvée par nos tests.",
-    params: [{k: "lookback", l: "Momentum (jours)", d: 30, min: 5, max: 120}],
-    grid: {lookback: [14, 20, 30, 45, 60, 90]},
-    signal(p, q) { const c = p.close; return c.map((v, i) => (i >= q.lookback && v != null && c[i - q.lookback] != null) ? (v > c[i - q.lookback] ? 1 : -1) : 0); }
-  },
-  sma: {
-    name: "Au-dessus de la moyenne",
-    desc: "Long quand le prix est au-dessus de sa moyenne mobile, sinon dehors (ou short).",
-    params: [{k: "n", l: "Moyenne (jours)", d: 50, min: 5, max: 250}],
-    grid: {n: [20, 30, 50, 75, 100, 150, 200]},
-    signal(p, q) { const m = sma(p.close, q.n); return p.close.map((v, i) => m[i] == null ? 0 : (v > m[i] ? 1 : -1)); }
-  },
-  donchian: {
-    name: "Cassure Donchian (tortues)",
-    desc: "Entre sur un plus haut de N jours, sort sur un plus bas de M jours. La méthode des « Turtle traders ».",
-    params: [{k: "n", l: "Entrée (jours)", d: 20, min: 5, max: 100}, {k: "m", l: "Sortie (jours)", d: 20, min: 3, max: 60}],
-    grid: {n: [10, 20, 30, 55], m: [5, 10, 20]},
-    signal(p, q) { const hh = rollMax(p.high, q.n), ll = rollMin(p.low, q.n), xl = rollMin(p.low, q.m), xh = rollMax(p.high, q.m);
-      const o = new Array(p.close.length).fill(0); let s = 0;
-      for (let i = 0; i < o.length; i++) { const c = p.close[i]; if (c == null || hh[i] == null || xl[i] == null) { o[i] = 0; s = 0; continue; }
-        if (s === 1 && c < xl[i]) s = 0; else if (s === -1 && c > xh[i]) s = 0;
-        if (s === 0) { if (c > hh[i]) s = 1; else if (c < ll[i]) s = -1; }
-        o[i] = s; } return o; }
-  },
-  ema: {
-    name: "Croisement de moyennes",
-    desc: "Long quand la moyenne rapide passe au-dessus de la lente.",
-    params: [{k: "f", l: "Rapide", d: 20, min: 3, max: 100}, {k: "s", l: "Lente", d: 50, min: 10, max: 300}],
-    grid: {f: [10, 20, 50], s: [30, 50, 100, 200]},
-    signal(p, q) { if (q.f >= q.s) return p.close.map(() => 0); const a = ema(p.close, q.f), b = ema(p.close, q.s);
-      return p.close.map((_, i) => (a[i] == null || b[i] == null) ? 0 : (a[i] > b[i] ? 1 : -1)); }
-  },
-  supertrend: {
-    name: "Supertrend",
-    desc: "Suit une bande de volatilité (ATR) qui se retourne quand la tendance change.",
-    params: [{k: "n", l: "ATR (jours)", d: 10, min: 3, max: 50}, {k: "mult", l: "Multiplicateur", d: 3, min: 1, max: 6, step: 0.5}],
-    grid: {n: [7, 10, 14, 21], mult: [2, 2.5, 3, 4]},
-    signal(p, q) { const a = atr(p, q.n), n = p.close.length, o = new Array(n).fill(0);
-      let fu = null, fl = null, dir = 1;
-      for (let i = 1; i < n; i++) { const c = p.close[i]; if (a[i] == null || c == null) { fu = fl = null; continue; }
-        const hl2 = (p.high[i] + p.low[i]) / 2, up = hl2 + q.mult * a[i], lo = hl2 - q.mult * a[i];
-        if (fu == null) { fu = up; fl = lo; o[i] = 0; continue; }
-        const pfu = fu, pfl = fl, pc = p.close[i - 1];
-        fu = (up < pfu || pc > pfu) ? up : pfu; fl = (lo > pfl || pc < pfl) ? lo : pfl;
-        if (dir < 0 && c > pfu) dir = 1; else if (dir > 0 && c < pfl) dir = -1;
-        o[i] = dir; } return o; }
-  },
-  meanrev: {
-    name: "Retour à la moyenne (Bollinger)",
-    desc: "Achète les excès de baisse sous la bande basse, revend au retour à la moyenne. Famille opposée au suivi de tendance.",
-    params: [{k: "n", l: "Période", d: 20, min: 5, max: 60}, {k: "k", l: "Écarts-types", d: 2, min: 1, max: 4, step: 0.5}],
-    grid: {n: [10, 20, 30], k: [1.5, 2, 2.5, 3]},
-    signal(p, q) { const m = sma(p.close, q.n), s = std(p.close, q.n), o = new Array(p.close.length).fill(0); let st = 0;
-      for (let i = 0; i < o.length; i++) { const c = p.close[i]; if (c == null || m[i] == null) { st = 0; continue; }
-        if (st === 1 && c >= m[i]) st = 0; else if (st === -1 && c <= m[i]) st = 0;
-        if (st === 0) { if (c < m[i] - q.k * s[i]) st = 1; else if (c > m[i] + q.k * s[i]) st = -1; }
-        o[i] = st; } return o; }
-  },
-  dip: {
-    name: "DipReversion (achat de creux)", longOnly: true,
-    desc: "Achète une chute brutale de 2-3 jours (RSI 3 très bas) quand la tendance de fond reste haussière, revend au rebond. Complément de TrendRegime.",
-    params: [{k: "entry", l: "RSI entrée <", d: 10, min: 2, max: 40}, {k: "exit", l: "RSI sortie >", d: 60, min: 40, max: 90}],
-    grid: {entry: [5, 10, 15, 20, 30], exit: [50, 60, 70]},
-    signal(p, q) { const r = rsi(p.close, 3), m = sma(p.close, 100), o = new Array(p.close.length).fill(0); let st = 0;
-      for (let i = 0; i < o.length; i++) { const c = p.close[i]; if (c == null || m[i] == null || r[i] == null) { st = 0; continue; }
-        if (st === 1 && (r[i] > q.exit || c < m[i] * 0.9)) st = 0;
-        else if (st === 0 && r[i] < q.entry && c > m[i]) st = 1;
-        o[i] = st; } return o; }
-  },
-  hold: {
-    name: "Acheter et garder", longOnly: true,
-    desc: "Référence : on achète tout le panier au départ et on ne touche plus à rien.",
-    params: [], grid: {},
-    signal(p) { return p.close.map(v => v == null ? 0 : 1); }
-  },
-};
-
-// ---------------------------------------------------------------- données dérivées
-const btc = CANDLES.pairs.BTC;
-const btcSma100 = sma(btc.close, 100);
-const btcUp = btc.close.map((v, i) => btcSma100[i] != null && v > btcSma100[i]);
-const vols = {}; PAIRS.forEach(k => { const r = rets(CANDLES.pairs[k].close); const s = std(r, 30); vols[k] = s.map(v => v == null ? null : v * Math.sqrt(365)); });
-
-function idxFrom(date) { const i = D.findIndex(d => d >= date); return i < 0 ? D.length - 1 : i; }
-
-// ---------------------------------------------------------------- simulateur
-function simulate(o) {
-  const {strat, params, lev, fee, wallet, from, to, btcFilter, volTarget, longShort} = o;
-  const S = STRATS[strat];
-  const allowShort = longShort && !S.longOnly;
-  const start = idxFrom(from), end = to ? idxFrom(to) - 1 : D.length - 1;
-  const nP = PAIRS.length;
-  const eq = [wallet], eqDates = [D[start]], liqDays = [];
-  const trades = [];
-  const state = PAIRS.map(() => ({w: 0, side: 0, blocked: 0, open: null}));
-  const sig = PAIRS.map(k => S.signal(CANDLES.pairs[k], params));
-  let equity = wallet;
-
-  const targetW = (pi, i) => {
-    const k = PAIRS[pi]; let s = sig[pi][i];
-    if (s < 0 && !allowShort) s = 0;
-    if (s > 0 && btcFilter && strat !== "hold" && !btcUp[i]) s = 0;
-    if (s === 0) return 0;
-    let w = s;
-    if (volTarget) { const v = vols[k][i]; w = v ? s * Math.min(0.5 / v, 1) : 0; }
-    return w;
-  };
-
-  // positions à la clôture du jour de départ
-  for (let pi = 0; pi < nP; pi++) { state[pi].w = targetW(pi, start); state[pi].side = Math.sign(state[pi].w);
-    if (state[pi].side) state[pi].open = {pair: PAIRS[pi], side: state[pi].side, in: D[start], mult: 1}; }
-
-  for (let i = start + 1; i <= end; i++) {
-    let dayPnl = 0;
-    for (let pi = 0; pi < nP; pi++) {
-      const p = CANDLES.pairs[PAIRS[pi]], st = state[pi];
-      const c0 = p.close[i - 1], c1 = p.close[i];
-      let pnl = 0;
-      if (st.w !== 0 && c0 != null && c1 != null) {
-        const adverse = st.w > 0 ? (c0 - p.low[i]) / c0 : (p.high[i] - c0) / c0;
-        if (adverse * lev >= 0.9) {
-          pnl = -Math.min(Math.abs(st.w), 1); // toute la marge de la position est perdue
-          liqDays.push(D[i]);
-          if (st.open) { st.open.mult = 0; st.open.out = D[i]; st.open.liq = true; trades.push(st.open); st.open = null; }
-          st.blocked = st.side; st.w = 0; st.side = 0; // attendre un nouveau signal
-        } else {
-          pnl = st.w * (c1 / c0 - 1) * lev;
-          if (st.open) st.open.mult *= (1 + pnl / Math.abs(st.w));
-        }
-      }
-      // nouvelle position voulue à la clôture de i
-      let nw = targetW(pi, i);
-      if (st.blocked) { if (Math.sign(nw) === Math.sign(st.blocked)) nw = 0; else st.blocked = 0; }
-      if (p.close[i] == null) nw = 0;
-      const cost = Math.abs(nw - st.w) * fee * lev;
-      pnl -= cost;
-      const ns = Math.sign(nw);
-      if (ns !== st.side) {
-        if (st.open) { st.open.out = D[i]; trades.push(st.open); st.open = null; }
-        if (ns) st.open = {pair: PAIRS[pi], side: ns, in: D[i], mult: 1};
-      }
-      st.w = nw; st.side = ns;
-      dayPnl += pnl / nP;
-    }
-    equity = Math.max(equity * (1 + dayPnl), 0);
-    eq.push(equity); eqDates.push(D[i]);
-    if (equity <= 0.5) { break; }
+// ---------------------------------------------------------------- moteur (identique à tools/lab.py)
+function simulate(W, lev, s, e, wallet) {
+  const days = [], n = PAIRS.length; let eq = wallet;
+  for (let j = s; j <= e; j++) {
+    let pnl = 0, expo = 0; const held = [], ins = [], outs = [], liqs = [];
+    PAIRS.forEach(p => {
+      const k = CANDLES.pairs[p], h = j > 0 ? W[p][j - 1] : 0, pr = j > 1 ? W[p][j - 2] : 0;
+      const o = k.open[j]; if (o == null) return;
+      const exitPx = j + 1 < D.length && k.open[j + 1] != null ? k.open[j + 1] : k.close[j];
+      let x = h * (exitPx / o - 1) * lev - Math.abs(h - pr) * FEE * lev - h * lev * FUND;
+      if (h > 0 && (o - k.low[j]) / o * lev >= 0.9) { x = -h; liqs.push(p); }
+      if (h > 0 && pr === 0) ins.push(p); if (h === 0 && pr > 0) outs.push(p); if (h > 0) held.push(p);
+      pnl += x / n; expo += h / n;
+    });
+    const before = eq; eq = Math.max(eq * (1 + Math.max(pnl, -1)), 0);
+    days.push({d: D[j], eq, chg: eq - before, pct: before > 0 ? eq / before - 1 : 0, held, ins, outs, liqs, expo});
   }
-  state.forEach(st => { if (st.open) { st.open.out = null; trades.push(st.open); } });
-  return {eq, eqDates, liqDays, trades, stats: stats(eq, eqDates, wallet, liqDays.length, trades)};
+  return days;
 }
-
-function stats(eq, dates, wallet, liqs, trades) {
-  const final = eq[eq.length - 1];
-  const days = Math.max((new Date(dates[dates.length - 1]) - new Date(dates[0])) / 864e5, 1);
-  let peak = eq[0], dd = 0; eq.forEach(v => { peak = Math.max(peak, v); dd = Math.min(dd, v / peak - 1); });
-  const r = eq.slice(1).map((v, i) => eq[i] > 0 ? v / eq[i] - 1 : 0);
-  const m = r.reduce((a, b) => a + b, 0) / (r.length || 1);
-  const sd = Math.sqrt(r.reduce((a, b) => a + (b - m) ** 2, 0) / (r.length || 1));
-  const closed = trades.filter(t => t.out);
-  const wins = closed.filter(t => t.mult > 1).length;
-  const goals = [2, 10, 100].map(x => { const j = eq.findIndex(v => v >= wallet * x); return {x, date: j < 0 ? null : dates[j], days: j < 0 ? null : Math.round((new Date(dates[j]) - new Date(dates[0])) / 864e5)}; });
-  return {final, total: final / wallet - 1, cagr: final > 0 ? (final / wallet) ** (365 / days) - 1 : -1, dd,
-          sharpe: sd > 0 ? m / sd * Math.sqrt(365) : 0, liqs, n: closed.length, winrate: closed.length ? wins / closed.length : 0,
-          ruined: final <= wallet * 0.05, goals};
+function stats(days, wallet) {
+  if (!days.length) return null;
+  let peak = wallet, dd = 0, win = 0, act = 0, best = null, worst = null, liq = 0, trades = 0;
+  days.forEach(x => { peak = Math.max(peak, x.eq); dd = Math.min(dd, x.eq / peak - 1);
+    if (x.expo > 0) { act++; if (x.chg > 0) win++; }
+    if (!best || x.pct > best.pct) best = x; if (!worst || x.pct < worst.pct) worst = x;
+    liq += x.liqs.length; trades += x.ins.length; });
+  const fin = days[days.length - 1].eq;
+  return {fin, gain: fin - wallet, pct: fin / wallet - 1, dd, win, act, best, worst, liq, trades};
 }
 
 // ---------------------------------------------------------------- interface
 const $ = id => document.getElementById(id);
-const fmtEur = v => v >= 1e6 ? (v / 1e6).toLocaleString("fr-FR", {maximumFractionDigits: 2}) + " M€" : Math.round(v).toLocaleString("fr-FR") + " €";
-const fmtPct = (v, d = 0) => (v >= 0 ? "+" : "") + (v * 100).toLocaleString("fr-FR", {maximumFractionDigits: d}) + " %";
-const cls = v => v >= 0 ? "pos" : "neg";
-let period = "all", scale = "log", params = {};
+const eur = v => (Math.abs(v) >= 1e6 ? (v / 1e6).toLocaleString("fr-FR", {maximumFractionDigits: 2}) + " M" : Math.round(v).toLocaleString("fr-FR")) + " €";
+const eurS = v => (v >= 0 ? "+" : "−") + eur(Math.abs(v));
+const pct = (v, d = 1) => (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("fr-FR", {minimumFractionDigits: d, maximumFractionDigits: d}) + " %";
+const cls = v => v > 0 ? "pos" : v < 0 ? "neg" : "";
+const fmtDate = d => new Date(d + "T00:00:00Z").toLocaleDateString("fr-FR", {weekday: "short", day: "2-digit", month: "short", year: "numeric", timeZone: "UTC"});
+const idxOf = date => { let i = D.findIndex(d => d >= date); return i < 0 ? D.length - 1 : i; };
+const idxTo = date => { let i = -1; for (let k = 0; k < D.length; k++) if (D[k] <= date) i = k; return Math.max(i, 0); };
+let lev = 2, journalN = 30, cache = {};
 
-const selS = $("strategy");
-Object.entries(STRATS).forEach(([k, s]) => { const o = document.createElement("option"); o.value = k; o.textContent = s.name; selS.appendChild(o); });
+LEVS.forEach(l => { const b = document.createElement("button"); b.type = "button"; b.textContent = "x" + l; b.dataset.lev = l;
+  b.addEventListener("click", () => { lev = l; run(); }); $("levs").appendChild(b); });
+const LEV_NOTE = {1: "Sans levier : le plus sûr.", 2: "Recommandé : meilleur rapport gain / risque dans nos tests.", 3: "Plus de gain, baisses jusqu'à −38 %.",
+  5: "Risqué : années perdantes et liquidations.", 10: "Très risqué : le wallet peut être détruit.", 20: "Loterie : ruine plus d'une fois sur deux."};
 
-function renderParams() {
-  const S = STRATS[selS.value]; $("stratDesc").textContent = S.desc;
-  const box = $("params"); box.innerHTML = "";
-  params = {};
-  S.params.forEach(p => { params[p.k] = p.d;
-    const f = document.createElement("div"); f.className = "field";
-    f.innerHTML = `<label class="label" for="p_${p.k}">${p.l}</label><input type="number" id="p_${p.k}" value="${p.d}" min="${p.min}" max="${p.max}" step="${p.step || 1}">`;
-    f.querySelector("input").addEventListener("change", e => { params[p.k] = +e.target.value; run(); });
-    box.appendChild(f); });
-  box.hidden = !S.params.length;
-  $("longShort").disabled = !!S.longOnly;
-}
+function params() { return {lookback: Math.max(5, +$("lookback").value || 30), btcSma: Math.max(0, +$("btcSma").value || 0), volTarget: Math.max(0.05, +$("volTarget").value || 0.5)}; }
+function weights() { const q = params(), k = JSON.stringify(q); if (!cache[k]) cache[k] = trendWeights(q); return cache[k]; }
+const HOLD = holdWeights();
 
-function opts(extra = {}) {
-  const [from, to] = period === "is" ? [IS_START, OOS_START] : period === "oos" ? [OOS_START, null] : [IS_START, null];
-  return {strat: selS.value, params: {...params}, lev: LEVS[+$("leverage").value], fee: (+$("fee").value || 0) / 100,
-          wallet: +$("wallet").value || 1000, from, to, btcFilter: $("btcFilter").checked, volTarget: $("volTarget").checked,
-          longShort: $("longShort").checked, ...extra};
+function setPreset(p) {
+  const last = D[D.length - 1];
+  let a, b = last;
+  if (p === "all") a = "2022-01-01";
+  else if (/^\d{4}$/.test(p)) { a = p + "-01-01"; b = p === last.slice(0, 4) ? last : p + "-12-31"; }
+  else { a = D[Math.max(D.length - +p, 0)]; }
+  $("from").value = a; $("to").value = b;
+  document.querySelectorAll("[data-preset]").forEach(x => x.setAttribute("aria-pressed", x.dataset.preset === p));
+  journalN = 30; run();
 }
 
 function run() {
-  $("levOut").textContent = "x" + LEVS[+$("leverage").value];
-  const o = opts(); const res = simulate(o); const s = res.stats;
-  $("kFinal").textContent = fmtEur(s.final); $("kFinal").className = "v " + cls(s.total);
-  $("kTotal").textContent = fmtPct(s.total) + " sur la période";
-  $("kDD").textContent = fmtPct(s.dd); $("kDD").className = "v " + (s.dd < -0.5 ? "neg" : s.dd < -0.25 ? "warnc" : "");
-  $("kLiq").textContent = s.liqs; $("kLiq").className = "v " + (s.liqs ? "neg" : "pos");
-  $("kTrades").textContent = `${s.n} trades, ${Math.round(s.winrate * 100)} % gagnants`;
-  $("kCagr").textContent = fmtPct(s.cagr); $("kCagr").className = "v " + cls(s.cagr);
-  $("kSharpe").textContent = "Sharpe " + s.sharpe.toFixed(2);
-  $("goals").innerHTML = s.goals.map(g => `<span>x${g.x} : ${g.date ? "atteint en " + g.days + " j" : "jamais"}</span>`).join("") + (s.ruined ? `<span class="neg">wallet détruit</span>` : "");
-  drawChart(res, btcOnly(o));
-  levTable(o);
-  tradeTable(res.trades);
+  document.querySelectorAll("[data-lev]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.lev === lev));
+  $("levNote").textContent = LEV_NOTE[lev];
+  const wallet = Math.max(+$("wallet").value || 1000, 1);
+  let s = idxOf($("from").value || "2022-01-01"), e = idxTo($("to").value || D[D.length - 1]);
+  if (e < s) [s, e] = [e, s];
+  const W = weights(), days = simulate(W, lev, s, e, wallet), st = stats(days, wallet);
+  const hold = $("showHold").checked ? simulate(HOLD, lev, s, e, wallet) : null;
+  const hs = hold ? stats(hold, wallet) : null;
+
+  $("kFinal").textContent = eur(st.fin); $("kFinal").className = "v " + cls(st.pct);
+  $("kGain").textContent = `${eurS(st.gain)} (${pct(st.pct)})`;
+  $("kDD").textContent = pct(st.dd); $("kDD").className = "v " + (st.dd < -0.4 ? "neg" : st.dd < -0.2 ? "warnc" : "");
+  $("kDays").textContent = st.act ? Math.round(st.win / st.act * 100) + " %" : "–";
+  $("kDaysS").textContent = `${st.act} jours investis sur ${days.length}`;
+  $("kBest").innerHTML = `<span class="pos">${pct(st.best.pct)}</span>`; $("kWorst").textContent = `pire : ${pct(st.worst.pct)} le ${st.worst.d.split("-").reverse().join("/")}`;
+  $("kLiq").textContent = st.liq; $("kLiq").className = "v " + (st.liq ? "neg" : "pos");
+  $("kTrades").textContent = `${st.trades} achats sur la période`;
+
+  const d0 = D[s].split("-").reverse().join("/"), d1 = D[e].split("-").reverse().join("/");
+  $("verdict").innerHTML = `Du <strong>${d0}</strong> au <strong>${d1}</strong> (${days.length} jours), avec un levier <strong>x${lev}</strong>, ${eur(wallet)} seraient devenus <strong class="${cls(st.pct)}">${eur(st.fin)}</strong> (${pct(st.pct)}).` +
+    (hs ? ` Acheter et garder le même panier aurait donné <strong class="${cls(hs.pct)}">${eur(hs.fin)}</strong> (${pct(hs.pct)}).` : "") +
+    (days[days.length - 1].held.length ? ` Positions ouvertes au ${d1} : ${days[days.length - 1].held.join(", ")}.` : ` Au ${d1}, le bot est en dehors du marché.`);
+  $("chartNote").textContent = `${d0} → ${d1}`;
+  $("lgHold").hidden = !hold;
+  drawChart(days, hold, wallet);
+  yearTable(W, wallet);
+  monthTable(days, wallet);
+  journal(days);
+  mcTable();
 }
 
-function btcOnly(o) {
-  const start = idxFrom(o.from), end = o.to ? idxFrom(o.to) - 1 : D.length - 1;
-  const c0 = btc.close[start]; const out = [];
-  for (let i = start; i <= end; i++) out.push(o.wallet * btc.close[i] / c0);
-  return out;
+function yearTable(W, wallet) {
+  const yrs = [...new Set(D.map(d => d.slice(0, 4)))].filter(y => y >= "2022");
+  const ft = {}; (YEARLY || []).forEach(r => { if (/^\d{4}$/.test(r.period) && r.leverage === lev) ft[r.period] = r; });
+  $("yearNote").textContent = "levier x" + lev;
+  $("yearTable").innerHTML = `<thead><tr><th>Année</th><th>Simulateur</th><th>Pire baisse</th><th>Freqtrade</th><th>Acheter-garder</th></tr></thead><tbody>` +
+    yrs.map(y => { const s = idxOf(y + "-01-01"), e = idxTo(y + "-12-31");
+      const a = stats(simulate(W, lev, s, e, wallet), wallet), h = stats(simulate(HOLD, lev, s, e, wallet), wallet), f = ft[y];
+      const lbl = y === D[D.length - 1].slice(0, 4) ? y + " *" : y;
+      return `<tr><td>${lbl}</td><td class="m ${cls(a.pct)}">${pct(a.pct, 0)}</td><td class="m">${pct(a.dd, 0)}</td><td class="m ${f ? cls(f.profit_pct) : ""}">${f ? pct(f.profit_pct / 100, 0) : "–"}</td><td class="m ${cls(h.pct)}">${pct(h.pct, 0)}</td></tr>`; }).join("") +
+    `</tbody>` + `<caption style="caption-side:bottom;text-align:left;padding-top:6px" class="note">* ${D[D.length - 1].slice(0, 4)} : du 1er janvier au ${D[D.length - 1].split("-").reverse().join("/")}. Freqtrade testé pour x1, x2 et x3.</caption>`;
 }
 
-function levTable(o) {
-  const rows = LEVS.map(l => ({l, s: simulate({...o, lev: l}).stats}));
-  $("levTable").innerHTML = `<thead><tr><th>Levier</th><th>Wallet final</th><th>Total</th><th>Pire baisse</th><th>Liquidations</th><th>x100 ?</th></tr></thead><tbody>` +
-    rows.map(r => `<tr class="${r.l === o.lev ? "cur" : ""}"><td class="m">x${r.l}</td><td class="m ${cls(r.s.total)}">${fmtEur(r.s.final)}</td><td class="m ${cls(r.s.total)}">${fmtPct(r.s.total)}</td><td class="m ${r.s.dd < -0.5 ? "neg" : ""}">${fmtPct(r.s.dd)}</td><td class="m ${r.s.liqs ? "neg" : ""}">${r.s.liqs}</td><td>${r.s.goals[2].date ? '<span class="pill pos">oui</span>' : r.s.ruined ? '<span class="pill neg">ruiné</span>' : '<span class="pill">non</span>'}</td></tr>`).join("") + "</tbody>";
+function monthTable(days, wallet) {
+  const m = {}; let prev = wallet;
+  days.forEach(x => { const k = x.d.slice(0, 7); if (!m[k]) m[k] = {start: prev}; m[k].end = x.eq; prev = x.eq; });
+  const yrs = [...new Set(Object.keys(m).map(k => k.slice(0, 4)))];
+  $("monthTable").innerHTML = `<thead><tr><th>Année</th>${MONTHS.map(x => `<th>${x}</th>`).join("")}</tr></thead><tbody>` +
+    yrs.map(y => `<tr><td>${y}</td>${MONTHS.map((_, i) => { const k = `${y}-${String(i + 1).padStart(2, "0")}`, v = m[k];
+      if (!v) return "<td></td>"; const r = v.start > 0 ? v.end / v.start - 1 : 0;
+      return `<td class="m ${Math.abs(r) < 0.0005 ? "" : r > 0 ? "cell-pos" : "cell-neg"}">${Math.abs(r) < 0.0005 ? "0" : (r > 0 ? "+" : "−") + Math.abs(r * 100).toFixed(1)}</td>`; }).join("")}</tr>`).join("") + "</tbody>";
 }
 
-function tradeTable(tr) {
-  const last = tr.filter(t => t.in).sort((a, b) => (b.out || "9") .localeCompare(a.out || "9")).slice(0, 12);
-  $("tradeTable").innerHTML = `<thead><tr><th>Paire</th><th>Sens</th><th>Entrée</th><th>Sortie</th><th>Résultat (marge)</th></tr></thead><tbody>` +
-    (last.length ? last.map(t => `<tr><td>${t.pair}</td><td>${t.side > 0 ? "Long" : "Short"}</td><td class="m">${t.in}</td><td class="m">${t.out || "en cours"}</td><td class="m ${t.mult >= 1 ? "pos" : "neg"}">${t.liq ? '<span class="pill neg">liquidé</span> ' : ""}${fmtPct(t.mult - 1, 1)}</td></tr>`).join("")
-     : `<tr><td colspan="5">Aucun trade sur la période.</td></tr>`) + "</tbody>";
-}
-
-function ftTable() {
-  if (!SUMMARY || !SUMMARY.length) { $("ftTable").innerHTML = "<tbody><tr><td>Pas encore de résultats Freqtrade.</td></tr></tbody>"; return; }
-  const by = {}; SUMMARY.filter(r => !r.error).forEach(r => { const k = r.strategy + "|" + r.leverage; (by[k] = by[k] || {s: r.strategy, l: r.leverage})[r.period.startsWith("in") ? "is" : "oos"] = r; });
-  const ACTIVE = ["TrendRegime", "DipReversion", "SupertrendTrend"];
-  const rank = s => { const i = ACTIVE.indexOf(s); return i < 0 ? 99 : i; };
-  const rows = Object.values(by).sort((a, b) => rank(a.s) - rank(b.s) || a.s.localeCompare(b.s) || a.l - b.l);
-  const cell = r => r ? `<td class="m ${cls(r.profit_pct)}">${fmtPct(r.profit_pct / 100)}</td><td class="m">${(-r.max_drawdown_pct).toFixed(0)} %</td>` : "<td>–</td><td>–</td>";
-  $("ftTable").innerHTML = `<thead><tr><th>Stratégie</th><th>Levier</th><th>Apprentissage</th><th>Baisse max</th><th>Validation</th><th>Baisse max</th><th>Liq.</th></tr></thead><tbody>` +
-    rows.map(r => `<tr><td>${r.s}${ACTIVE.includes(r.s) ? "" : ' <span class="pill neg">archivée</span>'}</td><td class="m">x${r.l}</td>${cell(r.is)}${cell(r.oos)}<td class="m">${(r.is?.liquidations || 0) + (r.oos?.liquidations || 0)}</td></tr>`).join("") + "</tbody>";
+function journal(days) {
+  const rows = days.slice().reverse().slice(0, journalN);
+  $("journalNote").textContent = `${Math.min(journalN, days.length)} jours affichés sur ${days.length}, du plus récent au plus ancien`;
+  $("more").hidden = journalN >= days.length;
+  $("journal").innerHTML = `<thead><tr><th>Date</th><th>Wallet</th><th>Gain du jour</th><th>%</th><th>Investi</th><th>Événements</th></tr></thead><tbody>` +
+    rows.map(x => { const ev = [
+        ...x.ins.map(p => `<span class="pill pos">achat ${p}</span>`),
+        ...x.outs.map(p => `<span class="pill">vente ${p}</span>`),
+        ...x.liqs.map(p => `<span class="pill neg">liquidation ${p}</span>`)].join("") ||
+        (x.held.length ? `<span class="note">garde ${x.held.join(", ")}</span>` : `<span class="note">hors marché</span>`);
+      return `<tr><td>${fmtDate(x.d)}</td><td class="m">${eur(x.eq)}</td><td class="m ${cls(x.chg)}">${Math.abs(x.chg) < 0.5 ? "0 €" : eurS(x.chg)}</td><td class="m ${cls(x.pct)}">${Math.abs(x.pct) < 0.00005 ? "0 %" : pct(x.pct, 2)}</td><td class="m">${Math.round(x.expo * 100)} %</td><td class="ev">${ev}</td></tr>`; }).join("") + "</tbody>";
 }
 
 function mcTable() {
-  if (!MC || !MC.length) { $("mcTable").innerHTML = "<tbody><tr><td>Pas de simulation.</td></tr></tbody>"; return; }
-  const pc = (v, bad) => `<td class="m ${bad ? (v >= 25 ? "neg" : v >= 5 ? "warnc" : "") : (v > 0 ? "pos" : "")}">${v < 0.05 && v > 0 ? "<0,1" : v.toLocaleString("fr-FR", {maximumFractionDigits: 1})} %</td>`;
-  $("mcTable").innerHTML = `<thead><tr><th>Stratégie</th><th>Levier</th><th>x2</th><th>x10</th><th>x100</th><th>Perdre la moitié</th><th>Ruine</th><th>Résultat médian</th></tr></thead><tbody>` +
-    MC.map(r => `<tr><td>${r.strategy}</td><td class="m">x${r.leverage}</td>${pc(r.p_x2_pct)}${pc(r.p_x10_pct)}${pc(r.p_x100_pct)}${pc(r.p_loss_half_pct, 1)}${pc(r.p_ruin_pct, 1)}<td class="m ${r.median_final_x >= 1 ? "pos" : "neg"}">x${r.median_final_x.toFixed(2)}</td></tr>`).join("") + "</tbody>";
+  if (!MC || !MC.length) return;
+  const rows = MC.filter(r => r.leverage === lev);
+  const c = (v, bad) => `<td class="m ${bad ? (v >= 25 ? "neg" : v >= 5 ? "warnc" : "") : ""}">${v > 0 && v < 0.1 ? "<0,1" : v.toLocaleString("fr-FR", {maximumFractionDigits: 1})} %</td>`;
+  $("mcTable").innerHTML = `<thead><tr><th>Levier x${lev}</th><th>Doubler (x2)</th><th>x10</th><th>x100</th><th>Perdre la moitié</th><th>Ruine</th><th>Résultat typique</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${r.strategy}</td>${c(r.p_x2_pct)}${c(r.p_x10_pct)}${c(r.p_x100_pct)}${c(r.p_loss_half_pct, 1)}${c(r.p_ruin_pct, 1)}<td class="m ${r.median_final_x >= 1 ? "pos" : "neg"}">${eur(1000 * r.median_final_x)}</td></tr>`).join("") +
+    `</tbody><caption style="caption-side:bottom;text-align:left;padding-top:6px" class="note">Pour 1 000 € investis 6 mois. « Ruine » = il reste moins de 50 €. « Résultat typique » = médiane des 20 000 scénarios.</caption>`;
 }
 
 // ---------------------------------------------------------------- graphique
 function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-function drawChart(res, ref) {
+function drawChart(days, hold, wallet) {
   const cv = $("chart"), box = cv.parentElement, dpr = window.devicePixelRatio || 1;
   const W = box.clientWidth, H = box.clientHeight; cv.width = W * dpr; cv.height = H * dpr;
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
-  const padL = 64, padR = 12, padT = 10, padB = 26, w = W - padL - padR, h = H - padT - padB;
-  const all = res.eq.concat(ref).filter(v => v > 0);
-  let lo = Math.min(...all), hi = Math.max(...all);
-  const logS = scale === "log"; if (logS) { lo = Math.max(lo, 1); }
+  const padL = 62, padR = 12, padT = 10, padB = 24, w = W - padL - padR, h = H - padT - padB;
+  const vals = [wallet, ...days.map(x => x.eq), ...(hold ? hold.map(x => x.eq) : [])].filter(v => v > 0);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const logS = hi / lo > 4;
   const tf = v => logS ? Math.log10(Math.max(v, lo)) : v;
-  let a = tf(lo), b = tf(hi); if (a === b) { b = a + 1; }
-  const pad = (b - a) * 0.06; a -= pad; b += pad;
-  const n = Math.max(ref.length, res.eq.length);
-  const X = i => padL + (n > 1 ? i / (n - 1) : 0) * w, Y = v => padT + h - (tf(Math.max(v, lo)) - a) / (b - a) * h;
+  let a = tf(lo), b = tf(hi); if (b - a < 1e-9) { b = a + (logS ? 0.1 : Math.max(1, a * 0.05)); }
+  const pd = (b - a) * 0.08; a -= pd; b += pd;
+  const n = days.length;
+  const X = i => padL + (n > 1 ? i / (n - 1) : 0.5) * w, Y = v => padT + h - (tf(Math.max(v, lo)) - a) / (b - a) * h;
   g.font = "11px " + css("--mono"); g.fillStyle = css("--ink-2"); g.strokeStyle = css("--line"); g.lineWidth = 1;
-  // graduations
-  let ticks = [];
-  if (logS) { for (let e = Math.floor(a); e <= Math.ceil(b); e++) [1, 3].forEach(m => { const v = m * 10 ** e; if (tf(v) >= a && tf(v) <= b) ticks.push(v); }); }
-  else { const step = niceStep((b - a) / 5); for (let v = Math.ceil(a / step) * step; v <= b; v += step) ticks.push(v); }
+  const ticks = [];
+  if (logS) { for (let e = Math.floor(a); e <= Math.ceil(b); e++) [1, 2, 5].forEach(m => { const v = m * 10 ** e; if (tf(v) >= a && tf(v) <= b) ticks.push(v); }); }
+  else { const st = nice((b - a) / 4); for (let v = Math.ceil(a / st) * st; v <= b; v += st) ticks.push(v); }
   g.textAlign = "right"; g.textBaseline = "middle";
-  ticks.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(padL, y); g.lineTo(W - padR, y); g.stroke(); g.fillText(shortEur(v), padL - 8, y); });
-  // dates
-  g.textAlign = "center"; g.textBaseline = "top";
-  const dates = res.eqDates; let lastYear = null;
-  dates.forEach((d, i) => { const yr = d.slice(0, 4); if (yr !== lastYear) { lastYear = yr; const x = X(i); g.fillText(yr, Math.min(Math.max(x, padL + 14), W - padR - 14), H - padB + 8); } });
-  // liquidations
-  g.strokeStyle = css("--loss"); g.globalAlpha = .5;
-  res.liqDays.forEach(d => { const i = dates.indexOf(d); if (i >= 0) { g.beginPath(); g.moveTo(X(i), padT); g.lineTo(X(i), padT + h); g.stroke(); } });
-  g.globalAlpha = 1;
-  const line = (arr, col, lw) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); arr.forEach((v, i) => { const x = X(i), y = Y(v); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); };
-  line(ref, css("--ref"), 1.5);
-  line(res.eq, css("--accent"), 2.2);
-  const li = res.eq.length - 1; g.fillStyle = css("--accent"); g.beginPath(); g.arc(X(li), Y(res.eq[li]), 3.5, 0, 7); g.fill();
+  ticks.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(padL, y); g.lineTo(W - padR, y); g.stroke(); g.fillText(short(v), padL - 8, y); });
+  // repère du wallet de départ
+  g.setLineDash([4, 4]); g.strokeStyle = css("--ink-2"); g.globalAlpha = .5; g.beginPath(); g.moveTo(padL, Y(wallet)); g.lineTo(W - padR, Y(wallet)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+  // axe des dates
+  g.textAlign = "center"; g.textBaseline = "top"; g.fillStyle = css("--ink-2");
+  const span = n > 400 ? "year" : n > 60 ? "month" : "day"; let last = null, lastX = -99;
+  days.forEach((x, i) => { const key = span === "year" ? x.d.slice(0, 4) : span === "month" ? x.d.slice(0, 7) : x.d;
+    if (key !== last) { last = key; const px = X(i); if (px - lastX < 46) return; lastX = px;
+      const lab = span === "year" ? key : span === "month" ? MONTHS[+x.d.slice(5, 7) - 1] + (x.d.slice(5, 7) === "01" ? " " + x.d.slice(2, 4) : "") : x.d.slice(8, 10) + "/" + x.d.slice(5, 7);
+      g.fillText(lab, Math.min(Math.max(px, padL + 16), W - padR - 16), H - padB + 7); } });
+  g.strokeStyle = css("--loss"); g.globalAlpha = .55;
+  days.forEach((x, i) => { if (x.liqs.length) { g.beginPath(); g.moveTo(X(i), padT); g.lineTo(X(i), padT + h); g.stroke(); } }); g.globalAlpha = 1;
+  const line = (arr, col, lw) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); arr.forEach((x, i) => { const px = X(i), py = Y(x.eq); i ? g.lineTo(px, py) : g.moveTo(px, py); }); g.stroke(); };
+  if (hold) line(hold, css("--ref"), 1.4);
+  line(days, css("--accent"), 2.2);
+  const li = n - 1; g.fillStyle = css("--accent"); g.beginPath(); g.arc(X(li), Y(days[li].eq), 3.5, 0, 7); g.fill();
 }
-function niceStep(x) { const e = 10 ** Math.floor(Math.log10(x)); const f = x / e; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * e; }
-function shortEur(v) { return v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + "M" : v >= 1e3 ? (v / 1e3).toFixed(v >= 1e4 ? 0 : 1) + "k" : Math.round(v) + ""; }
-
-// ---------------------------------------------------------------- optimisation (walk-forward)
-function combos(grid) { return Object.entries(grid).reduce((acc, [k, vs]) => acc.flatMap(c => vs.map(v => ({...c, [k]: v}))), [{}]); }
-function optimise() {
-  const S = STRATS[selS.value]; const btn = $("optBtn"); btn.disabled = true; btn.textContent = "Calcul…";
-  setTimeout(() => {
-    const base = opts(), list = combos(S.grid);
-    let best = null;
-    list.forEach(q => { const s = simulate({...base, params: q, lev: 1, from: IS_START, to: OOS_START}).stats;
-      if (!best || s.sharpe > best.s.sharpe) best = {q, s}; });
-    const oos = simulate({...base, params: best.q, lev: 1, from: OOS_START, to: null}).stats;
-    const oosDef = simulate({...base, lev: 1, from: OOS_START, to: null}).stats;
-    Object.entries(best.q).forEach(([k, v]) => { params[k] = v; const el = $("p_" + k); if (el) el.value = v; });
-    $("optOut").hidden = false;
-    $("optOut").innerHTML = `<strong>${list.length} réglages testés sur 2022-2024 (x1).</strong><br>Meilleur : ${Object.entries(best.q).map(([k, v]) => k + "=" + v).join(", ") || "aucun paramètre"} (Sharpe ${best.s.sharpe.toFixed(2)}, ${fmtPct(best.s.total)}).<br>Sur 2025 → auj., jamais vu : <span class="${cls(oos.total)}">${fmtPct(oos.total)}</span>, pire baisse ${fmtPct(oos.dd)} (réglages précédents : ${fmtPct(oosDef.total)}).`;
-    btn.disabled = false; btn.textContent = "Optimiser sur 2022-2024"; run();
-  }, 30);
-}
+function nice(x) { const e = 10 ** Math.floor(Math.log10(x)); const f = x / e; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * e; }
+function short(v) { return v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e4 ? Math.round(v / 1e3) + "k" : v >= 1e3 ? (v / 1e3).toFixed(1) + "k" : Math.round(v) + ""; }
 
 // ---------------------------------------------------------------- événements
-selS.addEventListener("change", () => { renderParams(); $("optOut").hidden = true; run(); });
-["leverage", "wallet", "fee", "btcFilter", "volTarget", "longShort"].forEach(id => $(id).addEventListener("input", run));
-document.querySelectorAll("[data-period]").forEach(b => b.addEventListener("click", () => { period = b.dataset.period;
-  document.querySelectorAll("[data-period]").forEach(x => x.setAttribute("aria-pressed", x === b)); run(); }));
-document.querySelectorAll("[data-scale]").forEach(b => b.addEventListener("click", () => { scale = b.dataset.scale;
-  document.querySelectorAll("[data-scale]").forEach(x => x.setAttribute("aria-pressed", x === b)); run(); }));
-$("optBtn").addEventListener("click", optimise);
-window.addEventListener("resize", () => run());
-if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", run);
+document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => setPreset(b.dataset.preset)));
+["from", "to"].forEach(id => $(id).addEventListener("change", () => { document.querySelectorAll("[data-preset]").forEach(x => x.setAttribute("aria-pressed", false)); journalN = 30; run(); }));
+["wallet", "showHold", "lookback", "btcSma", "volTarget"].forEach(id => $(id).addEventListener("change", run));
+$("reset").addEventListener("click", () => { $("lookback").value = DEF.lookback; $("btcSma").value = DEF.btcSma; $("volTarget").value = DEF.volTarget; run(); });
+$("more").addEventListener("click", () => { journalN += 30; run(); });
+window.addEventListener("resize", run);
 new MutationObserver(run).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", run);
 
-$("dataTag").textContent = `${PAIRS.length} paires · ${D[0]} → ${D[D.length - 1]}`;
-renderParams(); ftTable(); mcTable(); run();
+$("from").min = $("to").min = D[0]; $("from").max = $("to").max = D[D.length - 1];
+$("dataTag").textContent = `données du ${D[0].split("-").reverse().join("/")} au ${D[D.length - 1].split("-").reverse().join("/")}`;
+setPreset("2026");
 </script>

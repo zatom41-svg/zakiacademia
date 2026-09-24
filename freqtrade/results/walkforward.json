@@ -1,0 +1,118 @@
+{
+ "trend": {
+  "robust_params": {
+   "lookback": 30,
+   "btc_sma": 200,
+   "vol_target": 0.3
+  },
+  "walk_forward": {
+   "total_pct": 141.2797882723153,
+   "cagr_pct": 26.644530863333472,
+   "maxdd_pct": -22.06740906875958,
+   "sharpe": 1.1505306334080592,
+   "liq": 0,
+   "expo_pct": 0.0
+  },
+  "walk_forward_choices": {
+   "2023": {
+    "lookback": 10,
+    "btc_sma": 200,
+    "vol_target": 0.3
+   },
+   "2024": {
+    "lookback": 30,
+    "btc_sma": 200,
+    "vol_target": 0.8
+   },
+   "2025": {
+    "lookback": 14,
+    "btc_sma": 200,
+    "vol_target": 0.3
+   },
+   "2026": {
+    "lookback": 30,
+    "btc_sma": 200,
+    "vol_target": 0.3
+   }
+  }
+ },
+ "dip": {
+  "robust_params": {
+   "entry": 5,
+   "exit_": 60,
+   "sma": 200
+  },
+  "walk_forward": {
+   "total_pct": 3.711927846716301,
+   "cagr_pct": 0.9822456515518718,
+   "maxdd_pct": -0.7431085399934645,
+   "sharpe": 1.190288334824249,
+   "liq": 0,
+   "expo_pct": 0.0
+  },
+  "walk_forward_choices": {
+   "2023": {
+    "entry": 5,
+    "exit_": 50,
+    "sma": 50
+   },
+   "2024": {
+    "entry": 5,
+    "exit_": 60,
+    "sma": 200
+   },
+   "2025": {
+    "entry": 5,
+    "exit_": 60,
+    "sma": 200
+   },
+   "2026": {
+    "entry": 5,
+    "exit_": 60,
+    "sma": 200
+   }
+  }
+ },
+ "combo_yearly": {
+  "2022": {
+   "total_pct": 0.0,
+   "cagr_pct": 0.0,
+   "maxdd_pct": 0.0,
+   "sharpe": 0.0,
+   "liq": 0,
+   "expo_pct": 0.0
+  },
+  "2023": {
+   "total_pct": 22.69006713045556,
+   "cagr_pct": 22.75901242983085,
+   "maxdd_pct": -6.307677606630291,
+   "sharpe": 1.7835340758136897,
+   "liq": 0,
+   "expo_pct": 17.689394581529562
+  },
+  "2024": {
+   "total_pct": 27.340898262310944,
+   "cagr_pct": 27.340898262310944,
+   "maxdd_pct": -7.835377941038423,
+   "sharpe": 2.0734569529128204,
+   "liq": 0,
+   "expo_pct": 15.657868628301117
+  },
+  "2025": {
+   "total_pct": 3.850614505700145,
+   "cagr_pct": 3.8613947822430106,
+   "maxdd_pct": -6.020198407605715,
+   "sharpe": 0.391711744484106,
+   "liq": 0,
+   "expo_pct": 13.393593852028085
+  },
+  "2026": {
+   "total_pct": 10.507440388233235,
+   "cagr_pct": 14.753430687491464,
+   "maxdd_pct": -2.899453454313461,
+   "sharpe": 1.8528284300404063,
+   "liq": 0,
+   "expo_pct": 4.575110516425409
+  }
+ }
+}

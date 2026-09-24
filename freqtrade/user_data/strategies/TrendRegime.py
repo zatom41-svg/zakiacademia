@@ -4,7 +4,7 @@ TrendRegime - momentum 30 jours + filtre de régime BTC + taille selon la volati
 Meilleure famille trouvée par tools/explore.py sur 2022-2026 (OKX futures,
 8 grosses cryptos). Idée, appuyée par la littérature (« time-series momentum ») :
   - on n'achète une crypto que si elle a monté sur les N derniers jours
-  - et seulement quand le BTC est au-dessus de sa moyenne 100 jours
+  - et seulement quand le BTC est au-dessus de sa moyenne 200 jours
     (en marché baissier, on reste en dollars)
   - la taille de chaque position est inversement proportionnelle à sa
     volatilité : moins de mise sur les cryptos qui bougent beaucoup
@@ -23,16 +23,23 @@ from za_common import ZaBase
 class TrendRegime(ZaBase):
     timeframe = "1d"
     can_short = False
-    startup_candle_count = 210
+    startup_candle_count = 260
 
     lookback = IntParameter(14, 90, default=30, space="buy")
-    btc_sma = IntParameter(50, 200, default=100, space="buy")
+    btc_sma = IntParameter(50, 250, default=200, space="buy")
     vol_target = DecimalParameter(0.2, 1.0, default=0.5, decimals=2, space="buy")
 
     # Stop « catastrophe » large : la sortie normale se fait par le signal
     atr_stop_mult = 5.0
 
     btc_pair = "BTC/USDT:USDT"
+
+    # Pas de pause automatique après des pertes : sur bougies journalières, ces
+    # protections bloquaient le bot des semaines entières (2024 : -1,7 % avec,
+    # +35 % sans). Le filtre de régime BTC joue déjà ce rôle.
+    @property
+    def protections(self):
+        return []
 
     def informative_pairs(self):
         return [(self.btc_pair, self.timeframe)]

@@ -20,12 +20,16 @@ ROOT = Path(__file__).resolve().parents[1]
 USERDIR = ROOT / "user_data"
 RESULTS = ROOT / "results"
 
-DEFAULT_STRATEGIES = ["MomentumTrend", "SupertrendTrend", "MeanReversionBB", "SqueezeBreakout"]
-DEFAULT_LEVERAGES = [1, 3, 5, 10, 20]
+DEFAULT_STRATEGIES = ["TrendRegime"]
+DEFAULT_LEVERAGES = [1, 2, 3, 5]
 PERIODS = {
-    # Période d'apprentissage (optimisation) et période de validation, jamais vue
-    "in_sample_2022_2024": "20220101-20250101",
-    "out_of_sample_2025_2026": "20250101-",
+    # Une ligne par année civile (2026 = du 1er janvier à aujourd'hui) + le tout
+    "2022": "20220101-20230101",
+    "2023": "20230101-20240101",
+    "2024": "20240101-20250101",
+    "2025": "20250101-20260101",
+    "2026": "20260101-",
+    "2022_aujourdhui": "20220101-",
 }
 
 

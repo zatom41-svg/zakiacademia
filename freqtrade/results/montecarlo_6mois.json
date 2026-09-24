@@ -2,155 +2,121 @@
  {
   "strategy": "TrendRegime",
   "leverage": 1,
-  "p_x2_pct": 2.175,
+  "p_x2_pct": 1.05,
   "p_x10_pct": 0.0,
   "p_x100_pct": 0.0,
   "p_loss_half_pct": 0.0,
   "p_ruin_pct": 0.0,
-  "median_final_x": 1.1030450245449468,
-  "median_worst_dd_pct": -12.129329039755577
+  "median_final_x": 1.080772389815841
  },
  {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 1,
-  "p_x2_pct": 13.29,
+  "strategy": "TrendRegime",
+  "leverage": 2,
+  "p_x2_pct": 14.23,
   "p_x10_pct": 0.0,
   "p_x100_pct": 0.0,
-  "p_loss_half_pct": 6.045,
+  "p_loss_half_pct": 0.19,
   "p_ruin_pct": 0.0,
-  "median_final_x": 1.0290292677321338,
-  "median_worst_dd_pct": -36.32918846852435
- },
- {
-  "strategy": "TrendRegime",
-  "leverage": 2,
-  "p_x2_pct": 20.175,
-  "p_x10_pct": 0.015,
-  "p_x100_pct": 0.0,
-  "p_loss_half_pct": 0.065,
-  "p_ruin_pct": 0.0,
-  "median_final_x": 1.1862941854211377,
-  "median_worst_dd_pct": -23.333405720669028
- },
- {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 2,
-  "p_x2_pct": 35.97,
-  "p_x10_pct": 0.96,
-  "p_x100_pct": 0.0,
-  "p_loss_half_pct": 31.069999999999997,
-  "p_ruin_pct": 0.4,
-  "median_final_x": 0.8261112627675233,
-  "median_worst_dd_pct": -65.57086667040267
+  "median_final_x": 1.1381130438292382
  },
  {
   "strategy": "TrendRegime",
   "leverage": 3,
-  "p_x2_pct": 34.235,
-  "p_x10_pct": 0.705,
+  "p_x2_pct": 27.865000000000002,
+  "p_x10_pct": 0.245,
   "p_x100_pct": 0.0,
-  "p_loss_half_pct": 3.175,
+  "p_loss_half_pct": 2.875,
   "p_ruin_pct": 0.0,
-  "median_final_x": 1.2092755363126333,
-  "median_worst_dd_pct": -34.2465333642838
- },
- {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 3,
-  "p_x2_pct": 43.4,
-  "p_x10_pct": 5.025,
-  "p_x100_pct": 0.055,
-  "p_loss_half_pct": 49.725,
-  "p_ruin_pct": 8.645,
-  "median_final_x": 0.505510446735695,
-  "median_worst_dd_pct": -84.07486521567381
+  "median_final_x": 1.1712094878419896
  },
  {
   "strategy": "TrendRegime",
   "leverage": 5,
-  "p_x2_pct": 46.81,
-  "p_x10_pct": 5.82,
-  "p_x100_pct": 0.055,
-  "p_loss_half_pct": 16.634999999999998,
-  "p_ruin_pct": 0.2,
-  "median_final_x": 1.1667691314137705,
-  "median_worst_dd_pct": -52.88665713301246
- },
- {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 5,
-  "p_x2_pct": 46.949999999999996,
-  "p_x10_pct": 10.74,
-  "p_x100_pct": 0.815,
-  "p_loss_half_pct": 78.215,
-  "p_ruin_pct": 51.81,
-  "median_final_x": 0.04383001816893789,
-  "median_worst_dd_pct": -99.06017338818852
- },
- {
-  "strategy": "TrendRegime",
-  "leverage": 10,
-  "p_x2_pct": 55.36,
-  "p_x10_pct": 14.605,
-  "p_x100_pct": 1.365,
-  "p_loss_half_pct": 46.7,
-  "p_ruin_pct": 9.325,
-  "median_final_x": 0.5767815505587566,
-  "median_worst_dd_pct": -86.0446901862003
- },
- {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 10,
-  "p_x2_pct": 37.03,
-  "p_x10_pct": 4.715,
-  "p_x100_pct": 0.22,
-  "p_loss_half_pct": 99.51,
-  "p_ruin_pct": 98.36,
-  "median_final_x": 1.807154706911481e-08,
-  "median_worst_dd_pct": -99.99999945479105
- },
- {
-  "strategy": "TrendRegime",
-  "leverage": 20,
-  "p_x2_pct": 42.805,
-  "p_x10_pct": 0.7799999999999999,
-  "p_x100_pct": 0.0,
-  "p_loss_half_pct": 79.905,
-  "p_ruin_pct": 57.84,
-  "median_final_x": 0.02078511747609937,
-  "median_worst_dd_pct": -99.13493571413827
- },
- {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 20,
-  "p_x2_pct": 29.244999999999997,
-  "p_x10_pct": 3.2649999999999997,
-  "p_x100_pct": 0.0,
-  "p_loss_half_pct": 100.0,
-  "p_ruin_pct": 100.0,
-  "median_final_x": 2.589312026668531e-27,
-  "median_worst_dd_pct": -100.0
- },
- {
-  "strategy": "TrendRegime",
-  "leverage": 50,
-  "p_x2_pct": 37.25,
-  "p_x10_pct": 1.22,
+  "p_x2_pct": 41.33,
+  "p_x10_pct": 3.02,
   "p_x100_pct": 0.005,
-  "p_loss_half_pct": 78.035,
-  "p_ruin_pct": 54.675,
-  "median_final_x": 0.032091804061041604,
-  "median_worst_dd_pct": -98.91479334882531
+  "p_loss_half_pct": 13.555,
+  "p_ruin_pct": 0.0,
+  "median_final_x": 1.1191522440472736
  },
  {
-  "strategy": "Acheter et garder (panier)",
-  "leverage": 50,
-  "p_x2_pct": 20.724999999999998,
-  "p_x10_pct": 2.455,
+  "strategy": "TrendRegime",
+  "leverage": 10,
+  "p_x2_pct": 48.144999999999996,
+  "p_x10_pct": 9.934999999999999,
+  "p_x100_pct": 0.58,
+  "p_loss_half_pct": 49.36,
+  "p_ruin_pct": 6.095,
+  "median_final_x": 0.5126959655978092
+ },
+ {
+  "strategy": "TrendRegime",
+  "leverage": 20,
+  "p_x2_pct": 48.08,
+  "p_x10_pct": 12.85,
+  "p_x100_pct": 1.145,
+  "p_loss_half_pct": 84.44500000000001,
+  "p_ruin_pct": 57.315000000000005,
+  "median_final_x": 0.02848882511942898
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 1,
+  "p_x2_pct": 11.525,
+  "p_x10_pct": 0.0,
   "p_x100_pct": 0.0,
+  "p_loss_half_pct": 7.3,
+  "p_ruin_pct": 0.0,
+  "median_final_x": 0.9755306990684669
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 2,
+  "p_x2_pct": 32.92,
+  "p_x10_pct": 0.7849999999999999,
+  "p_x100_pct": 0.0,
+  "p_loss_half_pct": 34.64,
+  "p_ruin_pct": 0.43,
+  "median_final_x": 0.7440525632428637
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 3,
+  "p_x2_pct": 41.339999999999996,
+  "p_x10_pct": 4.04,
+  "p_x100_pct": 0.04,
+  "p_loss_half_pct": 53.99,
+  "p_ruin_pct": 9.8,
+  "median_final_x": 0.4290406088655013
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 5,
+  "p_x2_pct": 43.95,
+  "p_x10_pct": 8.91,
+  "p_x100_pct": 0.655,
+  "p_loss_half_pct": 81.35,
+  "p_ruin_pct": 55.665,
+  "median_final_x": 0.031134217468216263
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 10,
+  "p_x2_pct": 43.055,
+  "p_x10_pct": 9.569999999999999,
+  "p_x100_pct": 1.4749999999999999,
+  "p_loss_half_pct": 98.695,
+  "p_ruin_pct": 96.905,
+  "median_final_x": 0.0
+ },
+ {
+  "strategy": "Acheter et garder",
+  "leverage": 20,
+  "p_x2_pct": 37.32,
+  "p_x10_pct": 7.82,
+  "p_x100_pct": 0.525,
   "p_loss_half_pct": 100.0,
   "p_ruin_pct": 100.0,
-  "median_final_x": 6.787896532675874e-67,
-  "median_worst_dd_pct": -100.0
+  "median_final_x": 0.0
  }
 ]
