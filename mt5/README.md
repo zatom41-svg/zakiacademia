@@ -4,15 +4,43 @@ Un robot MetaTrader 5 de **suivi de tendance / cassure**, avec les règles FTMO 
 
 ## Ce que fait le robot
 
-| Élément | Réglage par défaut |
+| Élément | Réglage par défaut (v1.10) |
 |---|---|
-| Unité de temps | H1 |
-| Entrée | Cassure du plus haut (ou plus bas) des 20 dernières bougies, dans le sens de l'EMA 200 |
-| Stop initial | 2 × ATR(14) |
-| Gestion | Break-even à +1R, puis stop suiveur à 3 × ATR |
+| Unité de temps | **H4** |
+| Entrée | Cassure du plus haut (ou plus bas) des **55** dernières bougies, dans le sens de l'EMA 200 |
+| Stop initial | **3** × ATR(14) |
+| Gestion | Break-even à +1R, puis stop suiveur à **5** × ATR |
 | Risque | 1 % du solde par trade (la taille en lots est calculée automatiquement) |
 | Trades max | 3 par jour et par symbole |
 | Horaires | Entrées de 8 h à 20 h (heure serveur), fermeture le vendredi à 20 h |
+
+## Résultats du backtest Python (`ea_backtest.py`, or H1/H4 2022 → sept. 2026)
+
+Testé sans MT5 sur l'historique horaire de PAXG (jeton adossé à l'or, qui suit XAUUSD), en heure serveur FTMO, sans les week-ends.
+
+**Ancien réglage (H1, Donchian 20, stop 2 ATR) : perdant.** −9 % au total, pire baisse −41 %, facteur de profit 0,96. Il ne gagnait qu'en 2025. **Ne pas l'utiliser.**
+
+**Nouveau réglage (H4, Donchian 55, stop 3 ATR, suiveur 5 ATR), risque 1 % :**
+
+| Année | Résultat | Pire baisse | Trades | Facteur de profit |
+|---|---|---|---|---|
+| 2022 | −2 % | −3 % | 23 | 0,73 |
+| 2023 | +1 % | −2 % | 18 | 1,23 |
+| 2024 | +5 % | −1 % | 17 | 4,01 |
+| 2025 | +6 % | −3 % | 27 | 2,10 |
+| 2026 (sept.) | +4 % | −2 % | 16 | 1,88 |
+
+C'est le seul réglage qui reste positif avant **et** après 2025 parmi les 72 testés (unités H1 et H4, cassure 10 à 55, stop 1,5 à 3 ATR, suiveur 3 à 5 ATR). Il perd très peu, mais **il gagne lentement**.
+
+**Challenge FTMO simulé** (un départ le 1er de chaque mois, 56 départs de 2022 à 2026) :
+
+| Risque par trade | Réussi en < 30 jours | Réussi un jour | Échoué | Durée médiane pour réussir |
+|---|---|---|---|---|
+| 1 % | 0 | 46 | 0 | environ 2 ans |
+| 2 % | 0 | 49 | 0 | environ 1 an |
+| 3 % | 0 | 50 | 2 | environ 8 mois |
+
+Conclusion : sur l'or seul, cet EA ne fait presque jamais échouer le challenge, mais **il ne le passe pas en moins d'un mois**. Pour aller plus vite sans prendre de gros risques, il faut plus d'occasions de trade : lancez-le **sur plusieurs actifs en même temps** (XAUUSD, US100.cash, US30.cash, EURUSD, GBPUSD), un graphique par actif, avec 0,5 à 1 % de risque chacun. À vérifier dans le testeur MT5 sur chaque actif.
 
 **Protections FTMO (Challenge 2-Step) :**
 - **Perte journalière :** coupure à **−4 %** du capital initial depuis le solde de début de journée (limite FTMO : −5 %). Le robot ferme tout et attend le lendemain.
@@ -32,8 +60,8 @@ Le tableau de bord (en haut à gauche du graphique) affiche l'equity, le résult
 
 ## Tester AVANT le challenge (obligatoire)
 
-1. **Testeur de stratégie** (Ctrl+R) : modèle « Chaque tick basé sur des ticks réels », au moins 2 ans d'historique, sur chaque symbole visé.
-2. **Optimisation :** faites varier `InpBreakoutBars` (10-55), `InpSlAtrMult` (1,5-3), `InpTrailAtrMult` (2-4), en optimisation génétique. Gardez 6 mois d'historique à part pour vérifier (onglet « Forward »). Un réglage qui ne tient pas sur la période forward est à jeter.
+1. **Testeur de stratégie** (Ctrl+R) : modèle **« OHLC sur M1 »** (rapide et suffisant pour un EA en H4), dates 2022.01.01 → aujourd'hui, `InpStopAtTarget = false` et `InpProfitTargetPct = 0` pour tester sur plusieurs années. Évitez « Chaque tick basé sur des ticks réels » : sur FTMO, les ticks réels ne commencent qu'en février 2024 et le test devient très long.
+2. **Optimisation :** faites varier `InpBreakoutBars` (20-100), `InpSlAtrMult` (2-4), `InpTrailAtrMult` (3-6), en optimisation génétique. Gardez 6 mois d'historique à part pour vérifier (onglet « Forward »). Un réglage qui ne tient pas sur la période forward est à jeter.
 3. **Compte démo FTMO** (Free Trial) pendant 2 à 4 semaines.
 
 ## « Valider en moins d'un mois »

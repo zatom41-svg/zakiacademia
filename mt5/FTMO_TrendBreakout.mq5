@@ -17,18 +17,18 @@
 //|   - fermeture avant le week-end                                  |
 //+------------------------------------------------------------------+
 #property copyright "zakiacademia"
-#property version   "1.00"
+#property version   "1.10"
 
 #include <Trade/Trade.mqh>
 
 //--- Strategie
 input group "=== Strategie ==="
-input ENUM_TIMEFRAMES InpTimeframe      = PERIOD_H1; // Unite de temps
-input int             InpBreakoutBars   = 20;        // Cassure : nombre de bougies (Donchian)
+input ENUM_TIMEFRAMES InpTimeframe      = PERIOD_H4; // Unite de temps (H4 : seul reglage robuste teste)
+input int             InpBreakoutBars   = 55;        // Cassure : nombre de bougies (Donchian)
 input int             InpEmaPeriod      = 200;       // Filtre de tendance : EMA
 input int             InpAtrPeriod      = 14;        // ATR : periode
-input double          InpSlAtrMult      = 2.0;       // Stop initial = ATR x
-input double          InpTrailAtrMult   = 3.0;       // Stop suiveur = ATR x
+input double          InpSlAtrMult      = 3.0;       // Stop initial = ATR x
+input double          InpTrailAtrMult   = 5.0;       // Stop suiveur = ATR x
 input double          InpBreakevenR     = 1.0;       // Break-even a +xR (0 = off)
 input double          InpTakeProfitR    = 0.0;       // Take profit a +xR (0 = laisser courir)
 input bool            InpAllowLong      = true;      // Autoriser les achats
@@ -63,6 +63,7 @@ CTrade   trade;
 int      hEma = INVALID_HANDLE;
 int      hAtr = INVALID_HANDLE;
 datetime lastBarTime   = 0;
+datetime lastManageMin = 0;
 datetime currentDay    = 0;
 double   dayStartBalance = 0;
 double   initialBalance  = 0;
@@ -137,7 +138,14 @@ void OnTick()
       return;
    }
 
-   ManageOpenPosition();
+   // Stop suiveur : une fois par minute suffit pour un EA en H1
+   // (le faire a chaque tick rendait le testeur tres lent)
+   datetime nowMin = TimeCurrent() - TimeCurrent() % 60;
+   if(nowMin != lastManageMin)
+   {
+      lastManageMin = nowMin;
+      ManageOpenPosition();
+   }
 
    // Signaux uniquement a l'ouverture d'une nouvelle bougie
    datetime barTime = iTime(_Symbol, InpTimeframe, 0);
@@ -403,6 +411,9 @@ void CloseAll(const string why)
 
 void ShowStatus(const string state)
 {
+   // Pas d'affichage pendant un backtest non visuel : gros gain de vitesse
+   if(MQLInfoInteger(MQL_TESTER) && !MQLInfoInteger(MQL_VISUAL_MODE))
+      return;
    double equity   = AccountInfoDouble(ACCOUNT_EQUITY);
    double pnlPct   = (equity / initialBalance - 1.0) * 100.0;
    double dayPct   = (equity - dayStartBalance) / initialBalance * 100.0;
