@@ -17,22 +17,34 @@
 //|   - fermeture avant le week-end                                  |
 //+------------------------------------------------------------------+
 #property copyright "zakiacademia"
-#property version   "1.10"
+#property version   "1.20"
 
 #include <Trade/Trade.mqh>
 
+enum ENUM_ZA_MODE
+{
+   ZA_BREAKOUT = 0, // Cassure de tendance (Donchian + EMA 200)
+   ZA_RSI2     = 1  // Retour a la moyenne RSI(2)
+};
+
 //--- Strategie
 input group "=== Strategie ==="
-input ENUM_TIMEFRAMES InpTimeframe      = PERIOD_H4; // Unite de temps (H4 : seul reglage robuste teste)
-input int             InpBreakoutBars   = 55;        // Cassure : nombre de bougies (Donchian)
+input ENUM_ZA_MODE    InpMode           = ZA_BREAKOUT; // Strategie
+input ENUM_TIMEFRAMES InpTimeframe      = PERIOD_H1; // Unite de temps
+input int             InpBreakoutBars   = 20;        // Cassure : nombre de bougies (Donchian)
 input int             InpEmaPeriod      = 200;       // Filtre de tendance : EMA
 input int             InpAtrPeriod      = 14;        // ATR : periode
 input double          InpSlAtrMult      = 3.0;       // Stop initial = ATR x
-input double          InpTrailAtrMult   = 5.0;       // Stop suiveur = ATR x
+input double          InpTrailAtrMult   = 3.0;       // Stop suiveur = ATR x (mode cassure)
 input double          InpBreakevenR     = 1.0;       // Break-even a +xR (0 = off)
 input double          InpTakeProfitR    = 0.0;       // Take profit a +xR (0 = laisser courir)
 input bool            InpAllowLong      = true;      // Autoriser les achats
 input bool            InpAllowShort     = true;      // Autoriser les ventes
+
+input group "=== Mode RSI(2) ==="
+input double          InpRsiLevel       = 5;         // Achat si RSI(2) < x, vente si > 100 - x
+input double          InpRsiTpAtr       = 1.0;       // Objectif = ATR x
+input int             InpRsiMaxBars     = 6;         // Sortie apres x bougies au maximum
 
 //--- Risque
 input group "=== Risque ==="
@@ -62,6 +74,7 @@ input ulong InpMagic              = 41410001; // Numero magique
 CTrade   trade;
 int      hEma = INVALID_HANDLE;
 int      hAtr = INVALID_HANDLE;
+int      hRsi = INVALID_HANDLE;
 datetime lastBarTime   = 0;
 datetime lastManageMin = 0;
 datetime currentDay    = 0;
@@ -80,7 +93,8 @@ int OnInit()
 {
    hEma = iMA(_Symbol, InpTimeframe, InpEmaPeriod, 0, MODE_EMA, PRICE_CLOSE);
    hAtr = iATR(_Symbol, InpTimeframe, InpAtrPeriod);
-   if(hEma == INVALID_HANDLE || hAtr == INVALID_HANDLE)
+   hRsi = iRSI(_Symbol, InpTimeframe, 2, PRICE_CLOSE);
+   if(hEma == INVALID_HANDLE || hAtr == INVALID_HANDLE || hRsi == INVALID_HANDLE)
    {
       Print("Erreur : impossible de creer les indicateurs");
       return INIT_FAILED;
@@ -110,6 +124,7 @@ void OnDeinit(const int reason)
 {
    if(hEma != INVALID_HANDLE) IndicatorRelease(hEma);
    if(hAtr != INVALID_HANDLE) IndicatorRelease(hAtr);
+   if(hRsi != INVALID_HANDLE) IndicatorRelease(hRsi);
    Comment("");
 }
 
@@ -271,13 +286,26 @@ void CheckEntry()
    double slDist = atr[0] * InpSlAtrMult;
    if(slDist <= 0) return;
 
+   if(InpMode == ZA_RSI2)
+   {
+      double rsi[];
+      if(CopyBuffer(hRsi, 0, 1, 1, rsi) != 1) return;
+      double tpDist = atr[0] * InpRsiTpAtr;
+      if(InpAllowLong && rsi[0] < InpRsiLevel && close1 > ema[0])
+         OpenTrade(ORDER_TYPE_BUY, slDist, tpDist);
+      else if(InpAllowShort && rsi[0] > 100.0 - InpRsiLevel && close1 < ema[0])
+         OpenTrade(ORDER_TYPE_SELL, slDist, tpDist);
+      return;
+   }
+
    if(InpAllowLong && close1 > channelHigh && close1 > ema[0])
-      OpenTrade(ORDER_TYPE_BUY, slDist);
+      OpenTrade(ORDER_TYPE_BUY, slDist, 0);
    else if(InpAllowShort && close1 < channelLow && close1 < ema[0])
-      OpenTrade(ORDER_TYPE_SELL, slDist);
+      OpenTrade(ORDER_TYPE_SELL, slDist, 0);
 }
 
-void OpenTrade(const ENUM_ORDER_TYPE type, const double slDist)
+// tpDist > 0 : objectif fixe en prix ; sinon InpTakeProfitR (0 = pas d'objectif)
+void OpenTrade(const ENUM_ORDER_TYPE type, const double slDist, const double tpDist)
 {
    double lots = LotsForRisk(slDist);
    if(lots <= 0)
@@ -291,8 +319,9 @@ void OpenTrade(const ENUM_ORDER_TYPE type, const double slDist)
                                             : SymbolInfoDouble(_Symbol, SYMBOL_BID);
    double sl = (type == ORDER_TYPE_BUY) ? price - slDist : price + slDist;
    double tp = 0;
-   if(InpTakeProfitR > 0)
-      tp = (type == ORDER_TYPE_BUY) ? price + slDist * InpTakeProfitR : price - slDist * InpTakeProfitR;
+   double tpD = (tpDist > 0) ? tpDist : slDist * InpTakeProfitR;
+   if(tpD > 0)
+      tp = (type == ORDER_TYPE_BUY) ? price + tpD : price - tpD;
    sl = NormalizeDouble(sl, digits);
    tp = NormalizeDouble(tp, digits);
 
@@ -335,6 +364,15 @@ double LotsForRisk(const double slDist)
 void ManageOpenPosition()
 {
    if(!SelectOwnPosition()) return;
+
+   // Mode RSI(2) : pas de stop suiveur, sortie au bout de InpRsiMaxBars bougies
+   if(InpMode == ZA_RSI2)
+   {
+      datetime opened = (datetime)PositionGetInteger(POSITION_TIME);
+      if(TimeCurrent() - opened >= (long)InpRsiMaxBars * PeriodSeconds(InpTimeframe))
+         trade.PositionClose((ulong)PositionGetInteger(POSITION_TICKET));
+      return;
+   }
 
    double atr[];
    if(CopyBuffer(hAtr, 0, 1, 1, atr) != 1) return;

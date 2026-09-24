@@ -1,46 +1,52 @@
-# EA MT5 « FTMO_TrendBreakout »
+# EA MT5 « FTMO_TrendBreakout » (v1.20)
 
-Un robot MetaTrader 5 de **suivi de tendance / cassure**, avec les règles FTMO codées en dur pour ne jamais les dépasser.
+Un robot MetaTrader 5 avec **deux stratégies au choix** et les règles FTMO codées en dur pour ne jamais les dépasser. On le pose sur **6 graphiques** (un par réglage) pour faire environ **2 trades par jour** au total.
 
-## Ce que fait le robot
+## Le portefeuille recommandé : 6 graphiques
 
-| Élément | Réglage par défaut (v1.10) |
-|---|---|
-| Unité de temps | **H4** |
-| Entrée | Cassure du plus haut (ou plus bas) des **55** dernières bougies, dans le sens de l'EMA 200 |
-| Stop initial | **3** × ATR(14) |
-| Gestion | Break-even à +1R, puis stop suiveur à **5** × ATR |
-| Risque | 1 % du solde par trade (la taille en lots est calculée automatiquement) |
-| Trades max | 3 par jour et par symbole |
-| Horaires | Entrées de 8 h à 20 h (heure serveur), fermeture le vendredi à 20 h |
+Chaque ligne = un graphique MT5 en **H1** avec l'EA, un **numéro magique différent**, et `InpRiskPercent = 1.0`.
 
-## Résultats du backtest Python (`ea_backtest.py`, or H1/H4 2022 → sept. 2026)
+| Graphique | `InpMode` | Réglages à changer | Autres |
+|---|---|---|---|
+| XAUUSD | Cassure | `InpBreakoutBars = 20`, `InpSlAtrMult = 3.0` | `InpMagic = 1` |
+| XAUUSD | RSI(2) | `InpRsiLevel = 5`, `InpSlAtrMult = 3.0`, `InpEndHour = 21` | `InpMagic = 2` |
+| US100.cash | Cassure | `InpBreakoutBars = 55`, `InpSlAtrMult = 3.0` | `InpMagic = 3` |
+| US100.cash | RSI(2) | `InpRsiLevel = 5`, `InpSlAtrMult = 3.0`, `InpEndHour = 21` | `InpMagic = 4` |
+| BTCUSD | Cassure | `InpBreakoutBars = 55`, `InpSlAtrMult = 2.0` | `InpMagic = 5`, `InpCloseBeforeWeekend = false` |
+| ETHUSD | Cassure | `InpBreakoutBars = 55`, `InpSlAtrMult = 3.0` | `InpMagic = 6`, `InpCloseBeforeWeekend = false` |
 
-Testé sans MT5 sur l'historique horaire de PAXG (jeton adossé à l'or, qui suit XAUUSD), en heure serveur FTMO, sans les week-ends.
+Pour tous : `InpInitialBalance` = la taille du compte (ex. 100000), `InpTrailAtrMult = 3.0`, `InpProfitTargetPct = 10` (phase 1) puis `5` (phase 2).
 
-**Ancien réglage (H1, Donchian 20, stop 2 ATR) : perdant.** −9 % au total, pire baisse −41 %, facteur de profit 0,96. Il ne gagnait qu'en 2025. **Ne pas l'utiliser.**
+## Comment ces réglages ont été choisis (`lab_ftmo.py`)
 
-**Nouveau réglage (H4, Donchian 55, stop 3 ATR, suiveur 5 ATR), risque 1 % :**
+- **Actifs testés** en bougies horaires, de janvier 2023 à septembre 2026 : or (PAXG, qui suit XAUUSD), Nasdaq 100 (QQQ, pour US100), EURUSD, BTC, ETH, SOL et XRP.
+- **4 familles de stratégies testées sur chaque actif, avec 3 à 6 réglages chacune** :
+  - cassure de tendance ;
+  - cassure du range d'ouverture de session ;
+  - cassure du plus haut / plus bas de la veille ;
+  - retour à la moyenne RSI(2).
+- **Coûts FTMO inclus** : spread, commission et glissement.
+- **Choix uniquement sur 2023-2024** (facteur de profit > 1,15, au moins 40 trades), puis **vérification sur 2025-2026**, une période jamais utilisée pour choisir. 6 couples ont été retenus.
+- **Écartés :** aucune stratégie ne marche sur EURUSD, SOL et XRP, ni la cassure d'ouverture de session et du plus haut de la veille. Le RSI(2) sur US100 a été retenu sur 2023-2024 mais **perd en 2025-2026** : vous pouvez ne pas l'activer.
 
-| Année | Résultat | Pire baisse | Trades | Facteur de profit |
-|---|---|---|---|---|
-| 2022 | −2 % | −3 % | 23 | 0,73 |
-| 2023 | +1 % | −2 % | 18 | 1,23 |
-| 2024 | +5 % | −1 % | 17 | 4,01 |
-| 2025 | +6 % | −3 % | 27 | 2,10 |
-| 2026 (sept.) | +4 % | −2 % | 16 | 1,88 |
+**Portefeuille en validation (2025-2026) :** 751 trades, **1,9 trade par jour de bourse**, facteur de profit 1,33, espérance +0,13 R par trade.
 
-C'est le seul réglage qui reste positif avant **et** après 2025 parmi les 72 testés (unités H1 et H4, cassure 10 à 55, stop 1,5 à 3 ATR, suiveur 3 à 5 ATR). Il perd très peu, mais **il gagne lentement**.
+**Challenge FTMO simulé** : un challenge démarré **chaque jour** de 2025-2026 (377 départs). Limite journalière comptée avec les pertes en cours.
 
-**Challenge FTMO simulé** (un départ le 1er de chaque mois, 56 départs de 2022 à 2026) :
+| Risque par trade | Réussi en ≤ 14 j | Échoué en ≤ 14 j | Réussi en ≤ 30 j | Échoué en ≤ 30 j | **Réussi à terme** | Échoué à terme | Phase 2 réussie |
+|---|---|---|---|---|---|---|---|
+| 0,5 % | 3 % | 0 % | 12 % | 0 % | 65 % | 5 % | 86 % |
+| 0,75 % | 10 % | 0 % | 24 % | 1 % | 69 % | 17 % | 84 % |
+| **1 %** | **18 %** | **1 %** | **36 %** | **11 %** | **76 %** | **23 %** | **78 %** |
+| 1,5 % | 28 % | 15 % | 47 % | 29 % | 67 % | 33 % | 70 % |
+| 2 % | 30 % | 40 % | 44 % | 51 % | 49 % | 51 % | 57 % |
 
-| Risque par trade | Réussi en < 30 jours | Réussi un jour | Échoué | Durée médiane pour réussir |
-|---|---|---|---|---|
-| 1 % | 0 | 46 | 0 | environ 2 ans |
-| 2 % | 0 | 49 | 0 | environ 1 an |
-| 3 % | 0 | 50 | 2 | environ 8 mois |
+**Ce qu'il faut en retenir :**
+- **Réussir en 2 semaines** n'arrive que dans **1 cas sur 5 à 1 cas sur 3**, quel que soit le risque.
+- **Monter le risque ne donne presque rien de plus sur les 14 premiers jours** (18 % → 30 %), mais fait exploser les échecs (1 % → 40 %).
+- **Le meilleur réglage est 1 % par trade :** 3 challenges sur 4 réussis si on laisse le temps (FTMO n'a pas de limite), dont 1 sur 5 en moins de 2 semaines.
 
-Conclusion : sur l'or seul, cet EA ne fait presque jamais échouer le challenge, mais **il ne le passe pas en moins d'un mois**. Pour aller plus vite sans prendre de gros risques, il faut plus d'occasions de trade : lancez-le **sur plusieurs actifs en même temps** (XAUUSD, US100.cash, US30.cash, EURUSD, GBPUSD), un graphique par actif, avec 0,5 à 1 % de risque chacun. À vérifier dans le testeur MT5 sur chaque actif.
+Limites : l'or, le Nasdaq et les cryptos sont testés sur des marchés proches de ceux de FTMO (PAXG, QQQ, futures OKX), pas sur les cotations FTMO elles-mêmes. Vérifiez chaque graphique dans le testeur MT5 avant de payer un challenge.
 
 **Protections FTMO (Challenge 2-Step) :**
 - **Perte journalière :** coupure à **−4 %** du capital initial depuis le solde de début de journée (limite FTMO : −5 %). Le robot ferme tout et attend le lendemain.
@@ -60,8 +66,8 @@ Le tableau de bord (en haut à gauche du graphique) affiche l'equity, le résult
 
 ## Tester AVANT le challenge (obligatoire)
 
-1. **Testeur de stratégie** (Ctrl+R) : modèle **« OHLC sur M1 »** (rapide et suffisant pour un EA en H4), dates 2022.01.01 → aujourd'hui, `InpStopAtTarget = false` et `InpProfitTargetPct = 0` pour tester sur plusieurs années. Évitez « Chaque tick basé sur des ticks réels » : sur FTMO, les ticks réels ne commencent qu'en février 2024 et le test devient très long.
-2. **Optimisation :** faites varier `InpBreakoutBars` (20-100), `InpSlAtrMult` (2-4), `InpTrailAtrMult` (3-6), en optimisation génétique. Gardez 6 mois d'historique à part pour vérifier (onglet « Forward »). Un réglage qui ne tient pas sur la période forward est à jeter.
+1. **Testeur de stratégie** (Ctrl+R) : modèle **« OHLC sur M1 »** (rapide et suffisant pour un EA en H1), dates 2022.01.01 → aujourd'hui, `InpStopAtTarget = false` et `InpProfitTargetPct = 0` pour tester sur plusieurs années. Évitez « Chaque tick basé sur des ticks réels » : sur FTMO, les ticks réels ne commencent qu'en février 2024 et le test devient très long.
+2. **Optimisation :** faites varier `InpBreakoutBars` (10-55), `InpSlAtrMult` (2-3), `InpTrailAtrMult` (2-4), en optimisation génétique. Gardez 6 mois d'historique à part pour vérifier (onglet « Forward »). Un réglage qui ne tient pas sur la période forward est à jeter.
 3. **Compte démo FTMO** (Free Trial) pendant 2 à 4 semaines.
 
 ## « Valider en moins d'un mois »
