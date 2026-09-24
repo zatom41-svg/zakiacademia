@@ -17,14 +17,15 @@
 //|   - fermeture avant le week-end                                  |
 //+------------------------------------------------------------------+
 #property copyright "zakiacademia"
-#property version   "1.21"
+#property version   "1.30"
 
 #include <Trade/Trade.mqh>
 
 enum ENUM_ZA_MODE
 {
    ZA_BREAKOUT = 0, // Cassure de tendance (Donchian + EMA 200)
-   ZA_RSI2     = 1  // Retour a la moyenne RSI(2)
+   ZA_RSI2     = 1, // Retour a la moyenne RSI(2)
+   ZA_TREND    = 2  // Tendance : achat tant que la cloture > moyenne (a utiliser en D1)
 };
 
 //--- Strategie
@@ -45,6 +46,10 @@ input group "=== Mode RSI(2) ==="
 input double          InpRsiLevel       = 5;         // Achat si RSI(2) < x, vente si > 100 - x
 input double          InpRsiTpAtr       = 1.0;       // Objectif = ATR x
 input int             InpRsiMaxBars     = 6;         // Sortie apres x bougies au maximum
+input int             InpRsiExitSma     = 5;         // Sortie des que la cloture > moyenne x (0 = off)
+
+input group "=== Mode Tendance ==="
+input int             InpTrendSma       = 50;        // Achat si cloture > moyenne x, sortie en dessous
 
 //--- Risque
 input group "=== Risque ==="
@@ -75,6 +80,8 @@ CTrade   trade;
 int      hEma = INVALID_HANDLE;
 int      hAtr = INVALID_HANDLE;
 int      hRsi = INVALID_HANDLE;
+int      hSmaExit  = INVALID_HANDLE;
+int      hSmaTrend = INVALID_HANDLE;
 datetime lastBarTime   = 0;
 datetime lastManageMin = 0;
 datetime lastTickMin   = 0;
@@ -95,6 +102,14 @@ int OnInit()
    hEma = iMA(_Symbol, InpTimeframe, InpEmaPeriod, 0, MODE_EMA, PRICE_CLOSE);
    hAtr = iATR(_Symbol, InpTimeframe, InpAtrPeriod);
    hRsi = iRSI(_Symbol, InpTimeframe, 2, PRICE_CLOSE);
+   if(InpRsiExitSma > 0)
+      hSmaExit = iMA(_Symbol, InpTimeframe, InpRsiExitSma, 0, MODE_SMA, PRICE_CLOSE);
+   hSmaTrend = iMA(_Symbol, InpTimeframe, InpTrendSma, 0, MODE_SMA, PRICE_CLOSE);
+   if(hSmaTrend == INVALID_HANDLE || (InpRsiExitSma > 0 && hSmaExit == INVALID_HANDLE))
+   {
+      Print("Erreur : impossible de creer les moyennes mobiles");
+      return INIT_FAILED;
+   }
    if(hEma == INVALID_HANDLE || hAtr == INVALID_HANDLE || hRsi == INVALID_HANDLE)
    {
       Print("Erreur : impossible de creer les indicateurs");
@@ -126,6 +141,8 @@ void OnDeinit(const int reason)
    if(hEma != INVALID_HANDLE) IndicatorRelease(hEma);
    if(hAtr != INVALID_HANDLE) IndicatorRelease(hAtr);
    if(hRsi != INVALID_HANDLE) IndicatorRelease(hRsi);
+   if(hSmaExit != INVALID_HANDLE) IndicatorRelease(hSmaExit);
+   if(hSmaTrend != INVALID_HANDLE) IndicatorRelease(hSmaTrend);
    Comment("");
 }
 
@@ -277,7 +294,7 @@ void CheckEntry()
 {
    if(HasPosition()) return;
    if(tradesToday >= InpMaxTradesPerDay) return;
-   if(!InTradingHours()) return;
+   if(InpMode != ZA_TREND && !InTradingHours()) return; // en D1 la bougie s'ouvre a minuit
    if(InpMaxSpreadPoints > 0 && SymbolInfoInteger(_Symbol, SYMBOL_SPREAD) > InpMaxSpreadPoints) return;
 
    double ema[], atr[];
@@ -295,11 +312,22 @@ void CheckEntry()
    double slDist = atr[0] * InpSlAtrMult;
    if(slDist <= 0) return;
 
+   if(InpMode == ZA_TREND)
+   {
+      double sma[];
+      if(CopyBuffer(hSmaTrend, 0, 1, 1, sma) != 1) return;
+      if(InpAllowLong && close1 > sma[0])
+         OpenTrade(ORDER_TYPE_BUY, slDist, 0);
+      else if(InpAllowShort && close1 < sma[0])
+         OpenTrade(ORDER_TYPE_SELL, slDist, 0);
+      return;
+   }
+
    if(InpMode == ZA_RSI2)
    {
       double rsi[];
       if(CopyBuffer(hRsi, 0, 1, 1, rsi) != 1) return;
-      double tpDist = atr[0] * InpRsiTpAtr;
+      double tpDist = (InpRsiTpAtr > 0) ? atr[0] * InpRsiTpAtr : 0;
       if(InpAllowLong && rsi[0] < InpRsiLevel && close1 > ema[0])
          OpenTrade(ORDER_TYPE_BUY, slDist, tpDist);
       else if(InpAllowShort && rsi[0] > 100.0 - InpRsiLevel && close1 < ema[0])
@@ -374,12 +402,30 @@ void ManageOpenPosition()
 {
    if(!SelectOwnPosition()) return;
 
-   // Mode RSI(2) : pas de stop suiveur, sortie au bout de InpRsiMaxBars bougies
+   ulong ticket0 = (ulong)PositionGetInteger(POSITION_TICKET);
+   long  type0   = PositionGetInteger(POSITION_TYPE);
+   double close1 = iClose(_Symbol, InpTimeframe, 1);
+
+   // Mode RSI(2) : pas de stop suiveur ; sortie au rebond (cloture > SMA) ou apres InpRsiMaxBars bougies
    if(InpMode == ZA_RSI2)
    {
       datetime opened = (datetime)PositionGetInteger(POSITION_TIME);
-      if(TimeCurrent() - opened >= (long)InpRsiMaxBars * PeriodSeconds(InpTimeframe))
-         trade.PositionClose((ulong)PositionGetInteger(POSITION_TICKET));
+      bool rebound = false;
+      double smaX[];
+      if(InpRsiExitSma > 0 && iTime(_Symbol, InpTimeframe, 0) > opened && CopyBuffer(hSmaExit, 0, 1, 1, smaX) == 1)
+         rebound = (type0 == POSITION_TYPE_BUY) ? close1 > smaX[0] : close1 < smaX[0];
+      if(rebound || TimeCurrent() - opened >= (long)InpRsiMaxBars * PeriodSeconds(InpTimeframe))
+         trade.PositionClose(ticket0);
+      return;
+   }
+
+   // Mode Tendance : sortie des que la cloture repasse de l'autre cote de la moyenne
+   if(InpMode == ZA_TREND)
+   {
+      double smaT[];
+      if(CopyBuffer(hSmaTrend, 0, 1, 1, smaT) == 1)
+         if((type0 == POSITION_TYPE_BUY && close1 < smaT[0]) || (type0 == POSITION_TYPE_SELL && close1 > smaT[0]))
+            trade.PositionClose(ticket0);
       return;
    }
 
