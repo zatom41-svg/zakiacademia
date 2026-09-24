@@ -55,6 +55,19 @@ Limites : l'or, le Nasdaq et les cryptos sont testés sur des marchés proches d
 
 Le tableau de bord (en haut à gauche du graphique) affiche l'equity, le résultat du jour et l'objectif.
 
+## Tout tester automatiquement (kit `tests_auto/`)
+
+1. **Compilez l'EA** sous le nom exact `FTMO_TrendBreakout` (dans MQL5\Experts).
+2. Ouvrez `tests_auto/lancer_les_tests.bat` avec le Bloc-notes et remplissez 2 lignes :
+   - `MT5` : le chemin de `terminal64.exe` (clic droit sur le raccourci MT5 → Propriétés → Cible) ;
+   - `DATA` : le dossier ouvert par **Fichier → Ouvrir le dossier des données** (copiez la barre d'adresse).
+3. **Fermez MT5**, puis double-cliquez sur `lancer_les_tests.bat`. Les 5 backtests (or cassure, or RSI(2), US100, BTC, ETH) s'enchaînent en « OHLC sur M1 » du 01/01/2023 au 20/09/2026, et les rapports arrivent dans `DATA\za_reports`.
+4. Envoyez-moi les rapports (fichiers .htm) : je compare avec mes résultats et j'ajuste.
+
+## Exporter l'historique FTMO pour mes tests
+
+Copiez `ZA_ExportHistory.mq5` dans MQL5\Scripts, compilez-le, puis glissez-le sur n'importe quel graphique. Il exporte l'historique H1 de 21 actifs FTMO dans `MQL5\Files\za_export`. Envoyez-moi ces CSV : `lab_ftmo.py` les lit directement et je pourrai tester tous les actifs sur les vraies cotations FTMO.
+
 ## Installation
 
 1. Dans MT5 : **Fichier → Ouvrir le dossier des données → MQL5 → Experts**, puis copiez-y `FTMO_TrendBreakout.mq5`.

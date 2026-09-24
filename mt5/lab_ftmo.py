@@ -48,8 +48,14 @@ def load(folder: str) -> dict[str, pd.DataFrame]:
         df = pd.read_csv(f)
         if df.empty:
             continue
-        df.index = pd.DatetimeIndex(pd.to_datetime(df.time, unit="s", utc=True)).tz_convert("Europe/Athens")
-        df = df.drop(columns="time").sort_index()
+        if "time_server" in df.columns:  # export ZA_ExportHistory.mq5 : heure du serveur FTMO
+            idx = pd.DatetimeIndex(pd.to_datetime(df.time_server, unit="s"))
+            df.index = idx.tz_localize("Europe/Athens", ambiguous="NaT", nonexistent="shift_forward")
+            df = df[df.index.notna()].drop(columns=[c for c in ("time_server", "spread_points") if c in df.columns])
+        else:
+            df.index = pd.DatetimeIndex(pd.to_datetime(df.time, unit="s", utc=True)).tz_convert("Europe/Athens")
+            df = df.drop(columns="time")
+        df = df.sort_index()
         df = df[~df.index.duplicated()]
         out[sym] = df
     return out
