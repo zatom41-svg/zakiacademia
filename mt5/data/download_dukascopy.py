@@ -32,7 +32,7 @@ URL = "https://datafeed.dukascopy.com/datafeed/{sym}/{y}/{m:02d}/BID_candles_hou
 def fetch(url: str, cache: Path) -> bytes | None:
     if cache.exists():
         return cache.read_bytes() or None
-    time.sleep(22)  # rythme régulier : le serveur bloque au-delà d'environ 1 requête / 20 s
+    time.sleep(30)  # rythme régulier : le serveur bloque au-delà d'environ 1 requête / 20 s
     for attempt in range(12):
         try:
             with urllib.request.urlopen(url, timeout=30) as r:
