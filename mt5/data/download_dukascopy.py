@@ -33,7 +33,7 @@ def fetch(url: str, cache: Path) -> bytes | None:
     if cache.exists():
         return cache.read_bytes() or None
     time.sleep(30)  # rythme régulier : le serveur bloque au-delà d'environ 1 requête / 20 s
-    for attempt in range(12):
+    for attempt in range(200):
         try:
             with urllib.request.urlopen(url, timeout=30) as r:
                 data = r.read()
@@ -43,7 +43,7 @@ def fetch(url: str, cache: Path) -> bytes | None:
             if e.code == 404:
                 cache.write_bytes(b"")
                 return None
-            time.sleep(60)  # 429 : trop de requêtes, on patiente
+            time.sleep(min(60 * (attempt + 1), 300))  # 429 : bloqué, on patiente de plus en plus
         except Exception:
             time.sleep(10)
     raise RuntimeError(f"échec : {url}")
