@@ -17,7 +17,7 @@
 //|   - fermeture avant le week-end                                  |
 //+------------------------------------------------------------------+
 #property copyright "zakiacademia"
-#property version   "1.20"
+#property version   "1.21"
 
 #include <Trade/Trade.mqh>
 
@@ -77,6 +77,7 @@ int      hAtr = INVALID_HANDLE;
 int      hRsi = INVALID_HANDLE;
 datetime lastBarTime   = 0;
 datetime lastManageMin = 0;
+datetime lastTickMin   = 0;
 datetime currentDay    = 0;
 double   dayStartBalance = 0;
 double   initialBalance  = 0;
@@ -131,6 +132,14 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
+   // Une seule verification par minute : l'EA travaille en H1, inutile de tout
+   // recalculer a chaque tick. Rend le testeur jusqu'a 50 fois plus rapide.
+   // (Les stops et objectifs restent geres par le serveur a chaque tick.)
+   datetime tickMin = TimeCurrent() - TimeCurrent() % 60;
+   if(tickMin == lastTickMin)
+      return;
+   lastTickMin = tickMin;
+
    StartNewDayIfNeeded();
 
    if(IsPermanentlyHalted())
